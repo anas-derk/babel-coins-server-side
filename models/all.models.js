@@ -60,6 +60,10 @@ const userSchema = mongoose.Schema({
     isVerified: {
         type: String,
         default: false,
+    },
+    createdDate: {
+        type: Date,
+        default: Date.now(),
     }
 });
 
