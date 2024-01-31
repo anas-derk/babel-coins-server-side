@@ -19,19 +19,19 @@ const userSchema = mongoose.Schema({
     },
     accountName: {
         type: String,
-        required: true,
+        default: "",
     },
     firstName: {
         type: String,
-        required: true,
+        default: "",
     },
     lastName: {
         type: String,
-        required: true,
+        default: "",
     },
     country: {
         type: String,
-        required: true,
+        default: "Syria",
     },
     accounts: [
         {
@@ -68,5 +68,6 @@ const userSchema = mongoose.Schema({
 const userModel = mongoose.model("user", userSchema);
 
 module.exports = {
+    mongoose,
     userModel,
 }
