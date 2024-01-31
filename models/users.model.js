@@ -23,6 +23,7 @@ async function createNewUser(email) {
             const generator = new CodeGenerator();
             const generatedPassword = generator.generateCodes("**##*#*#")[0];
             const generatedSecretCode = generator.generateCodes("######")[0];
+            const accountName = `B${await userModel.countDocuments({})}`;
             const TronWeb = require("tronweb");
             const tronWeb = new TronWeb({
                 fullHost: process.env.TRON_NODE_BASE_API_URL,
@@ -33,8 +34,14 @@ async function createNewUser(email) {
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
                 secretCode: await bcrypt.hash(generatedSecretCode, 10),
-                accountName: `B${await userModel.countDocuments({})}`,
+                accountName,
                 accounts: [
+                    {
+                        currencyName: "TRX",
+                        network: "TRON",
+                        address: tronAccount.address.base58,
+                        privateKey: tronAccount.privateKey,
+                    },
                     {
                         currencyName: "USDT",
                         network: "TRON",
@@ -47,7 +54,26 @@ async function createNewUser(email) {
             await newUser.save();
             // Disconnect In DB
             await mongoose.disconnect();
-            return "Ok !!, Create New User Is Successfuly !!";
+            return { msg: "Ok !!, Create New User Is Successfuly !!", data: {
+                email,
+                password: generatedPassword,
+                secretCode: secretCode,
+                accountName,
+                accounts: [
+                    {
+                        currencyName: "TRX",
+                        network: "TRON",
+                        address: tronAccount.address.base58,
+                        privateKey: tronAccount.privateKey,
+                    },
+                    {
+                        currencyName: "USDT",
+                        network: "TRON",
+                        address: tronAccount.address.base58,
+                        privateKey: tronAccount.privateKey,
+                    },
+                ],
+            }};
         }
     }
     catch (err) {
