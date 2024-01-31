@@ -57,7 +57,7 @@ async function createNewUser(email) {
             return { msg: "Ok !!, Create New User Is Successfuly !!", data: {
                 email,
                 password: generatedPassword,
-                secretCode: secretCode,
+                secretCode: generatedSecretCode,
                 accountName,
                 accounts: [
                     {
