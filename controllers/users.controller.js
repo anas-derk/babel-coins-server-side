@@ -7,9 +7,9 @@ async function getUserLogin(req, res) {
     }
 }
 
-async function postUserSignup(req, res) {
+async function postUserSignUp(req, res) {
     try{
-
+        
     }
     catch(err) {
         await res.status(500).json(err);
@@ -18,5 +18,5 @@ async function postUserSignup(req, res) {
 
 module.exports = {
     getUserLogin,
-    postUserSignup,
+    postUserSignUp,
 }
