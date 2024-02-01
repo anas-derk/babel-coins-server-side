@@ -59,20 +59,6 @@ async function createNewUser(email) {
                 password: generatedPassword,
                 secretCode: generatedSecretCode,
                 accountName,
-                accounts: [
-                    {
-                        currencyName: "TRX",
-                        network: "TRON",
-                        address: tronAccount.address.base58,
-                        privateKey: tronAccount.privateKey,
-                    },
-                    {
-                        currencyName: "USDT",
-                        network: "TRON",
-                        address: tronAccount.address.base58,
-                        privateKey: tronAccount.privateKey,
-                    },
-                ],
             }};
         }
     }
