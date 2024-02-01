@@ -6,6 +6,45 @@ const { mongoose, userModel } = require("../models/all.models");
 
 const bcrypt = require("bcryptjs");
 
+async function login(email, password) {
+    try {
+        // Connect To DB
+        await mongoose.connect(process.env.DB_URL);
+        // Check If Email Is Exist
+        const user = await userModel.findOne({ email });
+        if (user) {
+            // Check From Password
+            const isTruePassword = await bcrypt.compare(password, user.password);
+            await mongoose.disconnect();
+            if (isTruePassword) return {
+                msg: "login successfully !!",
+                error: false,
+                data: {
+                    _id: user._id,
+                    isVerified: user.isVerified,
+                }
+            };
+            else return {
+                msg: "Sorry, Email Or Password Incorrect !!",
+                error: true,
+                data: {},
+            };
+        }
+        else {
+            await mongoose.disconnect();
+            return {
+                msg: "Sorry, Email Or Password Incorrect !!",
+                error: true,
+                data: {},
+            };
+        }
+    }
+    catch (err) {
+        await mongoose.disconnect();
+        throw Error(err);
+    }
+}
+
 // Define Create New User Function
 
 async function createNewUser(email) {
@@ -75,4 +114,5 @@ async function createNewUser(email) {
 
 module.exports = {
     createNewUser,
+    login,
 }
