@@ -45,6 +45,43 @@ async function login(email, password) {
     }
 }
 
+async function getAllAccountsForUser(userId) {
+    try{
+        // Connect To DB
+        await mongoose.connect(process.env.DB_URL);
+        // Check If Email Is Exist
+        const user = await userModel.findById(userId);
+        await mongoose.disconnect();
+        if (user) {
+            const { getBalance } = require("../global/functions");
+            let allAccounts = [];
+            for(let account of user.accounts) {
+                allAccounts.push({
+                    currencyName: account.currencyName,
+                    network: account.network,
+                    balance: await getBalance(account.network, account.currencyName, account.address),
+                });
+            }
+            return {
+                msg: `Get All Account For User Id: ${userId} Process Has Been Successfully !!`,
+                error: false,
+                data: allAccounts,
+            };
+        } else {
+            return {
+                msg: `Sorry User Id: ${userId} Not Found !!`,
+                error: true,
+                data: [],
+            };
+        }
+    }
+    catch(err) {
+        console.log(err);
+        await mongoose.disconnect();
+        throw Error(err);
+    }
+}
+
 // Define Create New User Function
 
 async function createNewUser(email) {
@@ -113,6 +150,7 @@ async function createNewUser(email) {
 }
 
 module.exports = {
-    createNewUser,
     login,
+    getAllAccountsForUser,
+    createNewUser,
 }

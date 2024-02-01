@@ -24,6 +24,20 @@ async function getUserLogin(req, res) {
     }
 }
 
+async function getAllAccounts(req, res) {
+    try{
+        const userId = req.params.userId;
+        if (!userId) await res.status(400).json("Please Send User Id !!");
+        else {
+            const { getAllAccountsForUser } = require("../models/users.model");
+            await res.json(await getAllAccountsForUser(userId));
+        }
+    }
+    catch(err) {
+        await res.status(500).json(err);
+    }
+}
+
 async function postCreateUserAccount(req, res) {
     try{
         const email = req.body.email;
@@ -62,6 +76,7 @@ async function putUpdateUserData(req, res) {
 
 module.exports = {
     getUserLogin,
+    getAllAccounts,
     postCreateUserAccount,
     putUpdateUserData,
 }

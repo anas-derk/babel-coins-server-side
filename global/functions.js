@@ -47,7 +47,40 @@ function sendCodeToUserEmail(email) {
     });
 }
 
+async function getBalance(network, currency, accountAddress) {
+    try {
+        if (network === "TRON") {
+            const TronWeb = require("tronweb");
+            const tronWeb = new TronWeb({
+                fullHost: process.env.TRON_NODE_BASE_API_URL,
+                headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY},
+                privateKey: "642688994e74d517ccda16710d44f3fa1d96a7ecf7eb5a16fadc3055e427766a",
+            });
+            let balance;
+            switch (currency) {
+                case "TRX": {
+                    const result = await tronWeb.trx.getBalance(accountAddress);
+                    balance = await tronWeb.fromSun(result.toString(10));
+                    break;
+                }
+                case "USDT": {
+                    const abi = [{ "outputs": [{ "type": "uint256" }], "constant": true, "inputs": [{ "name": "who", "type": "address" }], "name": "balanceOf", "stateMutability": "View", "type": "Function" }, { "outputs": [{ "type": "bool" }], "inputs": [{ "name": "_to", "type": "address" }, { "name": "_value", "type": "uint256" }], "name": "transfer", "stateMutability": "Nonpayable", "type": "Function" }];
+                    const contract = await tronWeb.contract(abi, "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t");
+                    const result = await contract.balanceOf(accountAddress).call();
+                    balance = await tronWeb.fromSun(result.toString(10));
+                    break;
+                }
+            }
+            return balance;
+        }
+    }
+    catch (err) {
+        throw Error(err);
+    }
+}
+
 module.exports = {
     isEmail,
-    sendCodeToUserEmail
+    sendCodeToUserEmail,
+    getBalance,
 }
