@@ -12,6 +12,7 @@ async function login(email, password) {
         await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
         const user = await userModel.findOne({ email });
+        console.log(user)
         if (user) {
             // Check From Password
             const isTruePassword = await bcrypt.compare(password, user.password);
