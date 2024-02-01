@@ -16,7 +16,11 @@ async function createNewUser(email) {
         const user = await userModel.findOne({ email });
         if (user) {
             await mongoose.disconnect();
-            return "Sorry, Can't Create User Because it is Exist !!";
+            return {
+                msg: "Sorry, Can't Create User Because it is Exist !!",
+                error: true,
+                data: {},
+            };
         } else {
             // Create New Document From User Schema
             const CodeGenerator = require('node-code-generator');
@@ -54,7 +58,7 @@ async function createNewUser(email) {
             await newUser.save();
             // Disconnect In DB
             await mongoose.disconnect();
-            return { msg: "Ok !!, Create New User Is Successfuly !!", data: {
+            return { msg: "Ok !!, Create New User Is Successfuly !!", error: false, data: {
                 email,
                 password: generatedPassword,
                 secretCode: generatedSecretCode,
