@@ -59,6 +59,7 @@ async function getAllAccountsForUser(userId) {
                 allAccounts.push({
                     currencyName: account.currencyName,
                     network: account.network,
+                    address: account.address,
                     balance: await getBalance(account.network, account.currencyName, account.address),
                 });
             }
