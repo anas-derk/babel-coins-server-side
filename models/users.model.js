@@ -77,7 +77,6 @@ async function getAllAccountsForUser(userId) {
         }
     }
     catch(err) {
-        console.log(err);
         await mongoose.disconnect();
         throw Error(err);
     }
@@ -132,10 +131,11 @@ async function createNewUser(email) {
                 ],
             });
             // Save The New User As Document In User Collection
-            await newUser.save();
+            const newUserData = await newUser.save();
             // Disconnect In DB
             await mongoose.disconnect();
             return { msg: "Ok !!, Create New User Is Successfuly !!", error: false, data: {
+                _id: newUserData._id,
                 email,
                 password: generatedPassword,
                 secretCode: generatedSecretCode,
