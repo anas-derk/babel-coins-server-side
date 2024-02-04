@@ -110,6 +110,9 @@ async function createNewUser(email) {
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY},
             });
             const tronAccount = await tronWeb.createAccount();
+            const { Web3 } = require("web3");
+            const web3ForEthereum = new Web3(process.env.ETHEREUM_NODE_BASE_API_URL);
+            const ethereumAccount = web3ForEthereum.eth.accounts.create();
             const newUser = new userModel({
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
@@ -127,6 +130,18 @@ async function createNewUser(email) {
                         network: "TRON",
                         address: tronAccount.address.base58,
                         privateKey: tronAccount.privateKey,
+                    },
+                    {
+                        currencyName: "ETHER",
+                        network: "ETHEREUM",
+                        address: ethereumAccount.address,
+                        privateKey: ethereumAccount.privateKey,
+                    },
+                    {
+                        currencyName: "USDT",
+                        network: "ETHEREUM",
+                        address: ethereumAccount.address,
+                        privateKey: ethereumAccount.privateKey,
                     },
                 ],
             });
