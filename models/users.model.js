@@ -113,6 +113,8 @@ async function createNewUser(email) {
             const { Web3 } = require("web3");
             const web3ForEthereum = new Web3(process.env.ETHEREUM_NODE_BASE_API_URL);
             const ethereumAccount = web3ForEthereum.eth.accounts.create();
+            const web3ForPolygon = new Web3(process.env.POLYGON_NODE_BASE_API_URL);
+            const polygonAccount = web3ForPolygon.eth.accounts.create();
             const newUser = new userModel({
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
@@ -142,6 +144,12 @@ async function createNewUser(email) {
                         network: "ETHEREUM",
                         address: ethereumAccount.address,
                         privateKey: ethereumAccount.privateKey,
+                    },
+                    {
+                        currencyName: "USDT",
+                        network: "POLYGON",
+                        address: polygonAccount.address,
+                        privateKey: polygonAccount.privateKey,
                     },
                 ],
             });
