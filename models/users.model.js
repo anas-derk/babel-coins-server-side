@@ -115,6 +115,8 @@ async function createNewUser(email) {
             const ethereumAccount = web3ForEthereum.eth.accounts.create();
             const web3ForPolygon = new Web3(process.env.POLYGON_NODE_BASE_API_URL);
             const polygonAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
+            const web3ForBSC = new Web3(process.env.BINANCE_SMART_CHAIN_NODE_BASE_API_URL);
+            const bscAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
             const newUser = new userModel({
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
@@ -146,10 +148,28 @@ async function createNewUser(email) {
                         privateKey: ethereumAccount.privateKey,
                     },
                     {
+                        currencyName: "MATIC",
+                        network: "POLYGON",
+                        address: polygonAccount.address,
+                        privateKey: polygonAccount.privateKey,
+                    },
+                    {
                         currencyName: "USDT",
                         network: "POLYGON",
                         address: polygonAccount.address,
                         privateKey: polygonAccount.privateKey,
+                    },
+                    {
+                        currencyName: "BNB",
+                        network: "BSC",
+                        address: bscAccount.address,
+                        privateKey: bscAccount.privateKey,
+                    },
+                    {
+                        currencyName: "USDT",
+                        network: "BSC",
+                        address: bscAccount.address,
+                        privateKey: bscAccount.privateKey,
                     },
                 ],
             });
