@@ -75,7 +75,7 @@ async function getBalance(network, currency, accountAddress) {
                 }
             }
             return balance;
-        }
+        } else balance = 0;
     }
     catch (err) {
         throw Error(err);
