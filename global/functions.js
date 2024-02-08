@@ -49,7 +49,7 @@ function sendCodeToUserEmail(email) {
 
 async function getBalance(network, currency, accountAddress) {
     try {
-        let balance;
+        let balance = 0;
         if (network === "TRON") {
             const TronWeb = require("tronweb");
             const tronWeb = new TronWeb({
@@ -70,12 +70,10 @@ async function getBalance(network, currency, accountAddress) {
                     balance = await tronWeb.fromSun(result.toString(10));
                     break;
                 }
-                default: {
-                    balance = 0;
-                }
             }
             return balance;
-        } else balance = 0;
+        }
+        return balance;
     }
     catch (err) {
         throw Error(err);
