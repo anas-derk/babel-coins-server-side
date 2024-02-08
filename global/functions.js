@@ -49,6 +49,7 @@ function sendCodeToUserEmail(email) {
 
 async function getBalance(network, currency, accountAddress) {
     try {
+        let balance;
         if (network === "TRON") {
             const TronWeb = require("tronweb");
             const tronWeb = new TronWeb({
@@ -56,7 +57,6 @@ async function getBalance(network, currency, accountAddress) {
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY},
                 privateKey: "642688994e74d517ccda16710d44f3fa1d96a7ecf7eb5a16fadc3055e427766a",
             });
-            let balance;
             switch (currency) {
                 case "TRX": {
                     const result = await tronWeb.trx.getBalance(accountAddress);
