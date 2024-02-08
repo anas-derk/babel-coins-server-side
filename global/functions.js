@@ -70,6 +70,9 @@ async function getBalance(network, currency, accountAddress) {
                     balance = await tronWeb.fromSun(result.toString(10));
                     break;
                 }
+                default: {
+                    balance = 0;
+                }
             }
             return balance;
         }
