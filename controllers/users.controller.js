@@ -67,7 +67,18 @@ async function postCreateUserAccount(req, res) {
 async function putUpdateUserData(req, res) {
     try{
         const { updateUserData } = require("../models/users.model");
+    }
+    catch(err) {
+        await res.status(500).json(err);
+    }
+}
 
+async function postSendMoney(req, res) {
+    try{
+        const transactionData = req.body;
+        const { sendMoney } = require("../models/users.model");
+        const result = await sendMoney(transactionData);
+        await res.json(result);
     }
     catch(err) {
         await res.status(500).json(err);
@@ -79,4 +90,5 @@ module.exports = {
     getAllAccounts,
     postCreateUserAccount,
     putUpdateUserData,
+    postSendMoney,
 }

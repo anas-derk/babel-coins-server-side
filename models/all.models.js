@@ -35,10 +35,6 @@ const userSchema = mongoose.Schema({
     },
     accounts: [
         {
-            currencyName: {
-                type: String,
-                required: true,
-            },
             network: {
                 type: String,
                 required: true,
@@ -48,6 +44,18 @@ const userSchema = mongoose.Schema({
                 required: true,
             },
             privateKey: {
+                type: String,
+                required: true,
+            },
+        }
+    ],
+    balances: [
+        {
+            currencyName: {
+                type: String,
+                required: true,
+            },
+            network: {
                 type: String,
                 required: true,
             },

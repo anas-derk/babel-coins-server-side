@@ -116,7 +116,7 @@ async function createNewUser(email) {
             const web3ForPolygon = new Web3(process.env.POLYGON_NODE_BASE_API_URL);
             const polygonAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
             const web3ForBSC = new Web3(process.env.BINANCE_SMART_CHAIN_NODE_BASE_API_URL);
-            const bscAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
+            const bscAccount = web3ForBSC.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
             const newUser = new userModel({
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
@@ -124,52 +124,58 @@ async function createNewUser(email) {
                 accountName,
                 accounts: [
                     {
-                        currencyName: "TRX",
                         network: "TRON",
                         address: tronAccount.address.base58,
                         privateKey: tronAccount.privateKey,
                     },
                     {
+                        network: "ETHEREUM",
+                        address: ethereumAccount.address,
+                        privateKey: ethereumAccount.privateKey,
+                    },
+                    {
+                        network: "POLYGON",
+                        address: polygonAccount.address,
+                        privateKey: polygonAccount.privateKey,
+                    },
+                    {
+                        network: "BSC",
+                        address: bscAccount.address,
+                        privateKey: bscAccount.privateKey,
+                    },
+                ],
+                balances: [
+                    {
+                        currencyName: "TRX",
+                        network: "TRON",
+                    },
+                    {
                         currencyName: "USDT",
                         network: "TRON",
-                        address: tronAccount.address.base58,
-                        privateKey: tronAccount.privateKey,
                     },
                     {
                         currencyName: "ETHER",
                         network: "ETHEREUM",
-                        address: ethereumAccount.address,
-                        privateKey: ethereumAccount.privateKey,
                     },
                     {
                         currencyName: "USDT",
                         network: "ETHEREUM",
-                        address: ethereumAccount.address,
-                        privateKey: ethereumAccount.privateKey,
                     },
                     {
                         currencyName: "MATIC",
                         network: "POLYGON",
-                        address: polygonAccount.address,
-                        privateKey: polygonAccount.privateKey,
                     },
                     {
                         currencyName: "USDT",
                         network: "POLYGON",
-                        address: polygonAccount.address,
-                        privateKey: polygonAccount.privateKey,
                     },
                     {
-                        currencyName: "BNB",
+                        currencyName: "BTC",
                         network: "BSC",
-                        address: bscAccount.address,
-                        privateKey: bscAccount.privateKey,
                     },
                     {
                         currencyName: "USDT",
                         network: "BSC",
-                        address: bscAccount.address,
-                        privateKey: bscAccount.privateKey,
                     },
                 ],
             });
@@ -193,8 +199,28 @@ async function createNewUser(email) {
     }
 }
 
+async function sendMoney(transactionData){
+    try{
+        // Connect To DB
+        await mongoose.connect(process.env.DB_URL);
+        // Check If Email Is Exist
+        const user = await userModel.findOne({ _id: transactionData._id });
+        if (user) {
+            switch(user.network) {
+
+            }
+        }
+    }
+    catch(err) {
+        // Disconnect In DB
+        await mongoose.disconnect();
+        throw Error(err);
+    }
+}
+
 module.exports = {
     login,
     getAllAccountsForUser,
     createNewUser,
+    sendMoney,
 }
