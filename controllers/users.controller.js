@@ -93,27 +93,48 @@ async function postSendMoney(req, res) {
             await res.status(400).json("Please Send Receipent Address !!");
             return;
         }
+        if (!transactionData.amount) {
+            await res.status(400).json("Please Send Amount !!");
+            return;
+        }
         switch(transactionData.network) {
             case "TRON": {
                 switch (transactionData.currency) {
                     case "TRX": {
-                        
+                        if (transactionData.amount < 30) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
+                            return;
+                        }
+                        break;
                     }
                     case "USDT": {
-
+                        if (transactionData.amount < 10) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
+                            return;
+                        }
+                        break;
                     }
                     default: {
                         await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
                         return;
                     }
                 }
+                break;
             }
             case "ETHEREUM": {
                 switch (transactionData.currency) {
                     case "ETHER": {
+                        if (transactionData.amount < 0.02) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.02 ETHER !!");
+                            return;
+                        }
                         break;
                     }
                     case "USDT": {
+                        if (transactionData.amount < 5) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 5 USDT !!");
+                            return;
+                        }
                         break;
                     }
                     default: {
@@ -126,9 +147,17 @@ async function postSendMoney(req, res) {
             case "POLYGON": {
                 switch (transactionData.currency) {
                     case "MATIC": {
+                        if (transactionData.amount < 0.11) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.11 MATIC !!");
+                            return;
+                        }
                         break;
                     }
                     case "USDT": {
+                        if (transactionData.amount < 10) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
+                            return;
+                        }
                         break;
                     }
                     default: {
@@ -141,9 +170,17 @@ async function postSendMoney(req, res) {
             case "BSC": {
                 switch (transactionData.currency) {
                     case "BNB": {
+                        if (transactionData.amount < 0.01) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.01 BNB !!");
+                            return;
+                        }
                         break;
                     }
                     case "USDT": {
+                        if (transactionData.amount < 0.3) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.3 USDT !!");
+                            return;
+                        }
                         break;
                     }
                     default: {
