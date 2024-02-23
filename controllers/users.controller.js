@@ -76,9 +76,91 @@ async function putUpdateUserData(req, res) {
 async function postSendMoney(req, res) {
     try{
         const transactionData = req.body;
-        const { sendMoney } = require("../models/users.model");
-        const result = await sendMoney(transactionData);
-        await res.json(result);
+        const userId = req.params.userId;
+        if (!userId){
+            await res.status(400).json("Please Send User Id !!");
+            return;
+        }
+        if (!transactionData.network) {
+            await res.status(400).json("Please Send Network Name !!");
+            return;
+        }
+        if (!transactionData.currency) {
+            await res.status(400).json("Please Send Currency Name !!");
+            return;
+        }
+        if (!transactionData.receipentAddress) {
+            await res.status(400).json("Please Send Receipent Address !!");
+            return;
+        }
+        switch(transactionData.network) {
+            case "TRON": {
+                switch (transactionData.currency) {
+                    case "TRX": {
+                        
+                    }
+                    case "USDT": {
+
+                    }
+                    default: {
+                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
+                        return;
+                    }
+                }
+            }
+            case "ETHEREUM": {
+                switch (transactionData.currency) {
+                    case "ETHER": {
+                        break;
+                    }
+                    case "USDT": {
+                        break;
+                    }
+                    default: {
+                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
+                        return;
+                    }
+                }
+                break;
+            }
+            case "POLYGON": {
+                switch (transactionData.currency) {
+                    case "MATIC": {
+                        break;
+                    }
+                    case "USDT": {
+                        break;
+                    }
+                    default: {
+                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
+                        return;
+                    }
+                }
+                break;
+            }
+            case "BSC": {
+                switch (transactionData.currency) {
+                    case "BNB": {
+                        break;
+                    }
+                    case "USDT": {
+                        break;
+                    }
+                    default: {
+                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
+                        return;
+                    }
+                }
+                break;
+            }
+            default: {
+                await res.status(400).json("Please Send Valid Network Name !!");
+                return;
+            }
+        }
+        // const { sendMoney } = require("../models/users.model");
+        // const result = await sendMoney(transactionData);
+        // await res.json(result);
     }
     catch(err) {
         await res.status(500).json(err);
