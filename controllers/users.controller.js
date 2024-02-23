@@ -195,9 +195,9 @@ async function postSendMoney(req, res) {
                 return;
             }
         }
-        // const { sendMoney } = require("../models/users.model");
-        // const result = await sendMoney(transactionData);
-        // await res.json(result);
+        const { sendMoney } = require("../models/users.model");
+        const result = await sendMoney(userId, transactionData);
+        await res.json(result);
     }
     catch(err) {
         await res.status(500).json(err);

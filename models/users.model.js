@@ -24,7 +24,7 @@ async function login(email, password) {
                     isVerified: user.isVerified,
                 }
             };
-            else return {
+            return {
                 msg: "Sorry, Email Or Password Incorrect !!",
                 error: true,
                 data: {},
@@ -46,7 +46,7 @@ async function login(email, password) {
 }
 
 async function getAllAccountsForUser(userId) {
-    try{
+    try {
         // Connect To DB
         await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
@@ -55,7 +55,7 @@ async function getAllAccountsForUser(userId) {
         if (user) {
             const { getBalance } = require("../global/functions");
             let allAccounts = [];
-            for(let account of user.accounts) {
+            for (let account of user.accounts) {
                 allAccounts.push({
                     currencyName: account.currencyName,
                     network: account.network,
@@ -76,7 +76,7 @@ async function getAllAccountsForUser(userId) {
             };
         }
     }
-    catch(err) {
+    catch (err) {
         await mongoose.disconnect();
         throw Error(err);
     }
@@ -107,7 +107,7 @@ async function createNewUser(email) {
             const TronWeb = require("tronweb");
             const tronWeb = new TronWeb({
                 fullHost: process.env.TRON_NODE_BASE_API_URL,
-                headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY},
+                headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
             });
             const tronAccount = await tronWeb.createAccount();
             const { Web3 } = require("web3");
@@ -183,13 +183,15 @@ async function createNewUser(email) {
             const newUserData = await newUser.save();
             // Disconnect In DB
             await mongoose.disconnect();
-            return { msg: "Ok !!, Create New User Is Successfuly !!", error: false, data: {
-                _id: newUserData._id,
-                email,
-                password: generatedPassword,
-                secretCode: generatedSecretCode,
-                accountName,
-            }};
+            return {
+                msg: "Ok !!, Create New User Is Successfuly !!", error: false, data: {
+                    _id: newUserData._id,
+                    email,
+                    password: generatedPassword,
+                    secretCode: generatedSecretCode,
+                    accountName,
+                }
+            };
         }
     }
     catch (err) {
@@ -199,19 +201,63 @@ async function createNewUser(email) {
     }
 }
 
-async function sendMoney(transactionData){
-    try{
+async function sendMoney(userId, transactionData) {
+    try {
         // Connect To DB
         await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
-        const user = await userModel.findOne({ _id: transactionData._id });
+        const user = await userModel.findOne({ _id: userId });
         if (user) {
-            switch(user.network) {
-
+            switch (transactionData.network) {
+                case "ETHEREUM": {
+                    switch (transactionData.currency) {
+                        case "ETHER": {
+                            if (user.balances[2].balance < transactionData.amount + 0.0015) {
+                                await mongoose.disconnect();
+                                return {
+                                    msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
+                                    error: true,
+                                    data: {},
+                                };
+                            }
+                            user.balances[2].balance = user.balances[2].balance - (transactionData.amount + 0.0015);
+                            await userModel.updateOne({ _id: userId }, { balances: user.balances });
+                            await mongoose.disconnect();
+                            return {
+                                msg: `Updating User Balance For ${transactionData.currency} In ${transactionData.network} Network Has Been Successfully !!`,
+                                error: false,
+                                data: {},
+                            };
+                        }
+                        case "USDT": {
+                            if (user.balances[3].balance < transactionData.amount + 5) {
+                                await mongoose.disconnect();
+                                return {
+                                    msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
+                                    error: true,
+                                    data: {},
+                                };
+                            }
+                            user.balances[3].balance = user.balances[3].balance - (transactionData.amount + 5);
+                            await userModel.updateOne({ _id: userId }, { balances: user.balances });
+                            await mongoose.disconnect();
+                            return {
+                                msg: `Updating User Balance For ${transactionData.currency} In ${transactionData.network} Network Has Been Successfully !!`,
+                                error: false,
+                                data: {},
+                            };
+                        }
+                    }
+                }
             }
         }
+        return {
+            msg: "Sorry, This User Id Is Not Exist !!",
+            error: true,
+            data: {},
+        };
     }
-    catch(err) {
+    catch (err) {
         // Disconnect In DB
         await mongoose.disconnect();
         throw Error(err);
