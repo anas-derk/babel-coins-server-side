@@ -153,6 +153,22 @@ async function postSendMoney(req, res) {
                             await res.status(400).json("Please Send Amount Greater Than Or Equual 5 USDT !!");
                             return;
                         }
+                        const { sendMoney } = require("../models/users.model");
+                        result = await sendMoney(userId, transactionData);
+                        await res.json(result);
+                        if (!result.error) {
+                            const { sendMoneyOnBlockChain } = require("../global/functions");
+                            const transactionHash = await sendMoneyOnBlockChain(
+                                transactionData.network,
+                                process.env.ETHEREUM_NODE_BASE_API_URL,
+                                "usdt",
+                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                transactionData.receipentAddress,
+                                transactionData.amount,
+                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                            );
+                            console.log(transactionHash);
+                        }
                         break;
                     }
                     default: {
