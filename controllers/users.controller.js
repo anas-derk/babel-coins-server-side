@@ -169,6 +169,22 @@ async function postSendMoney(req, res) {
                             await res.status(400).json("Please Send Amount Greater Than Or Equual 0.11 MATIC !!");
                             return;
                         }
+                        const { sendMoney } = require("../models/users.model");
+                        result = await sendMoney(userId, transactionData);
+                        await res.json(result);
+                        // if (!result.error) {
+                        //     const { sendMoneyOnBlockChain } = require("../global/functions");
+                        //     const transactionHash = await sendMoneyOnBlockChain(
+                        //         transactionData.network,
+                        //         process.env.POLYGON_NODE_BASE_API_URL,
+                        //         "ether",
+                        //         process.env.BABEL_CENTRAL_WALLET_ON_POLYGON,
+                        //         transactionData.receipentAddress,
+                        //         transactionData.amount,
+                        //         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_POLYGON,
+                        //     );
+                        //     console.log(transactionHash);
+                        // }
                         break;
                     }
                     case "USDT": {
@@ -192,6 +208,22 @@ async function postSendMoney(req, res) {
                             await res.status(400).json("Please Send Amount Greater Than Or Equual 0.01 BNB !!");
                             return;
                         }
+                        const { sendMoney } = require("../models/users.model");
+                        result = await sendMoney(userId, transactionData);
+                        await res.json(result);
+                        // if (!result.error) {
+                        //     const { sendMoneyOnBlockChain } = require("../global/functions");
+                        //     const transactionHash = await sendMoneyOnBlockChain(
+                        //         transactionData.network,
+                        //         process.env.POLYGON_NODE_BASE_API_URL,
+                        //         "ether",
+                        //         process.env.BABEL_CENTRAL_WALLET_ON_BTC,
+                        //         transactionData.receipentAddress,
+                        //         transactionData.amount,
+                        //         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_BTC,
+                        //     );
+                        //     console.log(transactionHash);
+                        // }
                         break;
                     }
                     case "USDT": {
