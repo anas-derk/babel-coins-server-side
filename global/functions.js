@@ -80,8 +80,35 @@ async function getBalance(network, currency, accountAddress) {
     }
 }
 
+async function sendMoneyOnBlockChain(network, nodeURL, currency, senderAddress, receipentAddress, amount, senderPrivateKey){
+    try{
+        if (network === "ETHEREUM" || network === "POLYGON" || network === "BSC") {
+            const { Web3 } = require("web3");
+            const web3 = new Web3(nodeURL);
+            const gasPriceInWei = await web3.eth.getGasPrice();
+            const signedTx = await web3.eth.accounts.signTransaction({
+                from: senderAddress,
+                to: receipentAddress,
+                value: web3.utils.toWei(amount, currency),
+                gasPrice: gasPriceInWei,
+                gasLimit: 21000
+            }, senderPrivateKey);
+            const transactionHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+            return transactionHash;
+        }
+        if (network === "TRON") {
+            return "";
+        }
+        return "Sorry, Invalid Network Name !!";
+    }
+    catch(err){
+        throw Error(err);
+    }
+}
+
 module.exports = {
     isEmail,
     sendCodeToUserEmail,
     getBalance,
+    sendMoneyOnBlockChain,
 }
