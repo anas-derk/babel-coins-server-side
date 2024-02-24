@@ -117,6 +117,8 @@ async function createNewUser(email) {
             const polygonAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
             const web3ForBSC = new Web3(process.env.BINANCE_SMART_CHAIN_NODE_BASE_API_URL);
             const bscAccount = web3ForBSC.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
+            const cryptoJS = require("crypto-js");
+            const encryptedPrivateKeyForEthereum = cryptoJS.AES.encrypt(ethereumAccount.privateKey, process.env.secretKey).toString();
             const newUser = new userModel({
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
@@ -126,22 +128,22 @@ async function createNewUser(email) {
                     {
                         network: "TRON",
                         address: tronAccount.address.base58,
-                        privateKey: tronAccount.privateKey,
+                        privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
                     },
                     {
                         network: "ETHEREUM",
                         address: ethereumAccount.address,
-                        privateKey: ethereumAccount.privateKey,
+                        privateKey: encryptedPrivateKeyForEthereum,
                     },
                     {
                         network: "POLYGON",
                         address: polygonAccount.address,
-                        privateKey: polygonAccount.privateKey,
+                        privateKey: encryptedPrivateKeyForEthereum,
                     },
                     {
                         network: "BSC",
                         address: bscAccount.address,
-                        privateKey: bscAccount.privateKey,
+                        privateKey: encryptedPrivateKeyForEthereum,
                     },
                 ],
                 balances: [
