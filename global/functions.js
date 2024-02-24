@@ -86,26 +86,31 @@ async function sendMoneyOnBlockChain(network, nodeURL, currency, senderAddress, 
             const { Web3 } = require("web3");
             const web3 = new Web3(nodeURL);
             const gasPriceInWei = await web3.eth.getGasPrice();
-            // const signedTx = await web3.eth.accounts.signTransaction({
-            //     from: senderAddress,
-            //     to: receipentAddress,
-            //     value: web3.utils.toWei(amount, currency),
-            //     gasPrice: gasPriceInWei,
-            //     gasLimit: 21000
-            // }, senderPrivateKey);
             switch(currency) {
                 case "ether": {
-                    
-                    break;
+                    const signedTx = await web3.eth.accounts.signTransaction({
+                        from: senderAddress,
+                        to: receipentAddress,
+                        value: web3.utils.toWei(amount, currency),
+                        gasPrice: gasPriceInWei,
+                        gasLimit: 21000
+                    }, senderPrivateKey);
+                    return await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
                 }
                 case "usdt": {
                     const { USDT_CONTRACT_ADDRESS_ON_ETHEREUM, USDT_CONTRACT_ABI_ON_ETHEREUM } = require("./data");
                     const usdtContractOnEthereeum = new web3.eth.Contract(USDT_CONTRACT_ABI_ON_ETHEREUM, USDT_CONTRACT_ADDRESS_ON_ETHEREUM);
-                    break;
+                    const signedTx = await web3.eth.accounts.signTransaction({
+                        from: senderAddress,
+                        to: receipentAddress,
+                        gasPrice: gasPriceInWei,
+                        gasLimit: 21000,
+                    }, senderPrivateKey);
+                    return await usdtContractOnEthereeum.methods
+                                .transfer(receipentAddress, amount * 10 ** 6)
+                                .send(signedTx);
                 }
             }
-            // const transactionHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
-            // return transactionHash;
         }
         if (network === "TRON") {
             return "";

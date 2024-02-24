@@ -100,29 +100,6 @@ async function postSendMoney(req, res) {
         }
         let result;
         switch(transactionData.network) {
-            case "TRON": {
-                switch (transactionData.currency) {
-                    case "TRX": {
-                        if (transactionData.amount < 30) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
-                            return;
-                        }
-                        break;
-                    }
-                    case "USDT": {
-                        if (transactionData.amount < 10) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
-                            return;
-                        }
-                        break;
-                    }
-                    default: {
-                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
-                        return;
-                    }
-                }
-                break;
-            }
             case "ETHEREUM": {
                 switch (transactionData.currency) {
                     case "ETHER": {
@@ -178,84 +155,6 @@ async function postSendMoney(req, res) {
                 }
                 break;
             }
-            case "POLYGON": {
-                switch (transactionData.currency) {
-                    case "MATIC": {
-                        if (transactionData.amount < 0.11) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.11 MATIC !!");
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        result = await sendMoney(userId, transactionData);
-                        await res.json(result);
-                        // if (!result.error) {
-                        //     const { sendMoneyOnBlockChain } = require("../global/functions");
-                        //     const transactionHash = await sendMoneyOnBlockChain(
-                        //         transactionData.network,
-                        //         process.env.POLYGON_NODE_BASE_API_URL,
-                        //         "ether",
-                        //         process.env.BABEL_CENTRAL_WALLET_ON_POLYGON,
-                        //         transactionData.receipentAddress,
-                        //         transactionData.amount,
-                        //         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_POLYGON,
-                        //     );
-                        //     console.log(transactionHash);
-                        // }
-                        break;
-                    }
-                    case "USDT": {
-                        if (transactionData.amount < 10) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
-                            return;
-                        }
-                        break;
-                    }
-                    default: {
-                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
-                        return;
-                    }
-                }
-                break;
-            }
-            case "BSC": {
-                switch (transactionData.currency) {
-                    case "BNB": {
-                        if (transactionData.amount < 0.01) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.01 BNB !!");
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        result = await sendMoney(userId, transactionData);
-                        await res.json(result);
-                        // if (!result.error) {
-                        //     const { sendMoneyOnBlockChain } = require("../global/functions");
-                        //     const transactionHash = await sendMoneyOnBlockChain(
-                        //         transactionData.network,
-                        //         process.env.POLYGON_NODE_BASE_API_URL,
-                        //         "ether",
-                        //         process.env.BABEL_CENTRAL_WALLET_ON_BTC,
-                        //         transactionData.receipentAddress,
-                        //         transactionData.amount,
-                        //         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_BTC,
-                        //     );
-                        //     console.log(transactionHash);
-                        // }
-                        break;
-                    }
-                    case "USDT": {
-                        if (transactionData.amount < 0.3) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.3 USDT !!");
-                            return;
-                        }
-                        break;
-                    }
-                    default: {
-                        await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
-                        return;
-                    }
-                }
-                break;
-            }
             default: {
                 await res.status(400).json("Please Send Valid Network Name !!");
                 return;
@@ -263,8 +162,9 @@ async function postSendMoney(req, res) {
         }
     }
     catch(err) {
+        console.log(err);
         if (!err.message.includes("insufficient funds")) await res.status(500).json(err);
-        else console.log("insufficient funds");
+        else console.log(err);
     }
 }
 
