@@ -203,6 +203,30 @@ async function createNewUser(email) {
     }
 }
 
+async function updateUserBalance(userId, balances, balanceItemIndex, network, currency, amount, commission){
+    try{
+        if (balances[balanceItemIndex].balance < amount + commission) {
+            await mongoose.disconnect();
+            return {
+                msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
+                error: true,
+                data: {},
+            };
+        }    
+        balances[balanceItemIndex].balance = balances[balanceItemIndex].balance - (amount + commission);
+        await userModel.updateOne({ _id: userId }, { balances });
+        await mongoose.disconnect();
+        return {
+            msg: `Updating User Balance For ${currency} In ${network} Network Has Been Successfully !!`,
+            error: false,
+            data: {},
+        };
+    }
+    catch(err) {
+        throw Error(err);
+    }
+}
+
 async function sendMoney(userId, transactionData) {
     try {
         // Connect To DB
@@ -214,40 +238,78 @@ async function sendMoney(userId, transactionData) {
                 case "ETHEREUM": {
                     switch (transactionData.currency) {
                         case "ETHER": {
-                            if (user.balances[2].balance < transactionData.amount + 0.0015) {
-                                await mongoose.disconnect();
-                                return {
-                                    msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
-                                    error: true,
-                                    data: {},
-                                };
-                            }
-                            user.balances[2].balance = user.balances[2].balance - (transactionData.amount + 0.0015);
-                            await userModel.updateOne({ _id: userId }, { balances: user.balances });
-                            await mongoose.disconnect();
-                            return {
-                                msg: `Updating User Balance For ${transactionData.currency} In ${transactionData.network} Network Has Been Successfully !!`,
-                                error: false,
-                                data: {},
-                            };
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                2,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.0015
+                            );
                         }
                         case "USDT": {
-                            if (user.balances[3].balance < transactionData.amount + 5) {
-                                await mongoose.disconnect();
-                                return {
-                                    msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
-                                    error: true,
-                                    data: {},
-                                };
-                            }
-                            user.balances[3].balance = user.balances[3].balance - (transactionData.amount + 5);
-                            await userModel.updateOne({ _id: userId }, { balances: user.balances });
-                            await mongoose.disconnect();
-                            return {
-                                msg: `Updating User Balance For ${transactionData.currency} In ${transactionData.network} Network Has Been Successfully !!`,
-                                error: false,
-                                data: {},
-                            };
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                3,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                5,
+                            );
+                        }
+                    }
+                }
+                case "POLYGON": {
+                    switch (transactionData.currency) {
+                        case "MATIC": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                4,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.1,
+                            );
+                        }
+                        case "USDT": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                5,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.8,
+                            );
+                        }
+                    }
+                }
+                case "BSC": {
+                    switch (transactionData.currency) {
+                        case "BNB": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                6,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.0005,
+                            );
+                        }
+                        case "USDT": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                6,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.3,
+                            );
                         }
                     }
                 }
