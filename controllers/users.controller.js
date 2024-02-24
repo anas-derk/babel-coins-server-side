@@ -129,6 +129,23 @@ async function postSendMoney(req, res) {
                             await res.status(400).json("Please Send Amount Greater Than Or Equual 0.02 ETHER !!");
                             return;
                         }
+                        const { sendMoney } = require("../models/users.model");
+                        const result = await sendMoney(userId, transactionData);
+                        await res.json(result);
+                        if (!result.error) {
+                            const { Web3 } = require("web3");
+                            const web3 = new Web3(process.env.ETHEREUM_NODE_BASE_API_URL);
+                            const gasPriceInWei = await web3.eth.getGasPrice();
+                            const signedTx = await web3.eth.accounts.signTransaction({
+                                from: process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                to: transactionData.receipentAddress,
+                                value: web3.utils.toWei(transactionData.amount, "ether"),
+                                gasPrice: gasPriceInWei,
+                                gasLimit: 21000
+                            }, process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_ETHEREUM);
+                            const transactionHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction);
+                            console.log(transactionHash);
+                        }
                         break;
                     }
                     case "USDT": {
@@ -196,9 +213,6 @@ async function postSendMoney(req, res) {
                 return;
             }
         }
-        const { sendMoney } = require("../models/users.model");
-        const result = await sendMoney(userId, transactionData);
-        await res.json(result);
     }
     catch(err) {
         await res.status(500).json(err);
