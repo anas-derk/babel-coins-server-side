@@ -235,6 +235,32 @@ async function sendMoney(userId, transactionData) {
         const user = await userModel.findOne({ _id: userId });
         if (user) {
             switch (transactionData.network) {
+                case "TRON": {
+                    switch(transactionData.currency) {
+                        case "TRX": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                0,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.8,
+                            );
+                        }
+                        case "USDT": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                1,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                5,
+                            );
+                        }
+                    }
+                }
                 case "ETHEREUM": {
                     switch (transactionData.currency) {
                         case "ETHER": {
@@ -309,32 +335,6 @@ async function sendMoney(userId, transactionData) {
                                 transactionData.currency,
                                 transactionData.amount,
                                 0.3,
-                            );
-                        }
-                    }
-                }
-                case "TRON": {
-                    switch(transactionData.currency) {
-                        case "TRX": {
-                            return await updateUserBalance(
-                                userId,
-                                user.balances,
-                                0,
-                                transactionData.network,
-                                transactionData.currency,
-                                transactionData.amount,
-                                0.8,
-                            );
-                        }
-                        case "USDT": {
-                            return await updateUserBalance(
-                                userId,
-                                user.balances,
-                                1,
-                                transactionData.network,
-                                transactionData.currency,
-                                transactionData.amount,
-                                5,
                             );
                         }
                     }

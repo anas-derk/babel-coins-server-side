@@ -99,6 +99,39 @@ async function postSendMoney(req, res) {
             return;
         }
         switch(transactionData.network) {
+            case "TRON": {
+                switch (transactionData.currency) {
+                    case "TRX": {
+                        if (transactionData.amount < 1) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
+                            return;
+                        }
+                        const { sendMoney } = require("../models/users.model");
+                        await res.json(await sendMoney(userId, transactionData));
+                        if (!result.error) {
+                            const { sendMoneyOnBlockChain } = require("../global/functions");
+                            const transactionHash = await sendMoneyOnBlockChain(
+                                transactionData.network,
+                                "trx",
+                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                transactionData.receipentAddress,
+                                transactionData.amount,
+                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                            );
+                            console.log(transactionHash);
+                        }
+                        break;
+                    }
+                    case "USDT": {
+                        if (transactionData.amount < 10) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
+                            return;
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
             case "ETHEREUM": {
                 switch (transactionData.currency) {
                     case "ETHER": {
@@ -146,39 +179,6 @@ async function postSendMoney(req, res) {
                     default: {
                         await res.status(400).json(`Please Send Valid Currency Name For ${transactionData.network} Network !!`);
                         return;
-                    }
-                }
-                break;
-            }
-            case "TRON": {
-                switch (transactionData.currency) {
-                    case "TRX": {
-                        if (transactionData.amount < 1) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        await res.json(await sendMoney(userId, transactionData));
-                        if (!result.error) {
-                            const { sendMoneyOnBlockChain } = require("../global/functions");
-                            const transactionHash = await sendMoneyOnBlockChain(
-                                transactionData.network,
-                                "trx",
-                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
-                                transactionData.receipentAddress,
-                                transactionData.amount,
-                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
-                            );
-                            console.log(transactionHash);
-                        }
-                        break;
-                    }
-                    case "USDT": {
-                        if (transactionData.amount < 10) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
-                            return;
-                        }
-                        break;
                     }
                 }
                 break;
