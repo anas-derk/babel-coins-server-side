@@ -113,6 +113,11 @@ async function sendMoneyOnBlockChain(network, nodeURL, currency, senderAddress, 
             }
         }
         if (network === "TRON") {
+            const TronWeb = require("tronweb");
+            const tronWeb = new TronWeb({
+                fullHost: process.env.TRON_NODE_BASE_API_URL,
+                headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
+            });
             return "";
         }
         return "Sorry, Invalid Network Name !!";
