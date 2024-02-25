@@ -121,9 +121,9 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
             });
             switch(currency){
                 case "trx": {
-                    const tx = await tronWeb.trx;
-                    console.log(tx);
-                    return "";
+                    const unsignedTransaction = await tronWeb.transactionBuilder.sendTrx(receipentAddress, tronWeb.toSun(amount), senderAddress);
+                    const signedTx = await tronWeb.trx.sign(unsignedTransaction, senderPrivateKey);
+                    return await tronWeb.trx.sendRawTransaction(signedTx);
                 }
             }
         }

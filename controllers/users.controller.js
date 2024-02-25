@@ -102,18 +102,19 @@ async function postSendMoney(req, res) {
             case "TRON": {
                 switch (transactionData.currency) {
                     case "TRX": {
-                        if (transactionData.amount < 1) {
+                        if (transactionData.amount < 30) {
                             await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        await res.json(await sendMoney(userId, transactionData));
+                        const result = await sendMoney(userId, transactionData);
+                        await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
                                 "trx",
-                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                process.env.BABEL_CENTRAL_WALLET_ON_TRON,
                                 transactionData.receipentAddress,
                                 transactionData.amount,
                                 process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
@@ -140,7 +141,8 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        await res.json(await sendMoney(userId, transactionData));
+                        const result = await sendMoney(userId, transactionData);
+                        await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
@@ -161,7 +163,8 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        await res.json(await sendMoney(userId, transactionData));
+                        const result = await sendMoney(userId, transactionData);
+                        await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
