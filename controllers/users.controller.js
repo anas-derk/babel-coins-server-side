@@ -128,6 +128,21 @@ async function postSendMoney(req, res) {
                             await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
                             return;
                         }
+                        const { sendMoney } = require("../models/users.model");
+                        const result = await sendMoney(userId, transactionData);
+                        await res.json(result);
+                        if (!result.error) {
+                            const { sendMoneyOnBlockChain } = require("../global/functions");
+                            const transactionHash = await sendMoneyOnBlockChain(
+                                transactionData.network,
+                                "usdt",
+                                process.env.BABEL_CENTRAL_WALLET_ON_TRON,
+                                transactionData.receipentAddress,
+                                transactionData.amount,
+                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                            );
+                            console.log(transactionHash);
+                        }
                         break;
                     }
                 }

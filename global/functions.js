@@ -82,6 +82,7 @@ async function getBalance(network, currency, accountAddress) {
 
 async function sendMoneyOnBlockChain(network, currency, senderAddress, receipentAddress, amount, senderPrivateKey){
     try{
+        console.log()
         if (network === "ETHEREUM" || network === "POLYGON" || network === "BSC") {
             const { Web3 } = require("web3");
             const web3 = new Web3(`${process.env.ETHEREUM_NODE_BASE_API_URL}/${process.env.ETHEREUM_NODE_API_KEY}`);
@@ -123,6 +124,18 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
                 case "trx": {
                     const unsignedTransaction = await tronWeb.transactionBuilder.sendTrx(receipentAddress, tronWeb.toSun(amount), senderAddress);
                     const signedTx = await tronWeb.trx.sign(unsignedTransaction, senderPrivateKey);
+                    return await tronWeb.trx.sendRawTransaction(signedTx);
+                }
+                case "usdt": {
+                    const { USDT_CONTRACT_ADDRESS_ON_TRON } = require("./data");
+                    const unsignedTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
+                        USDT_CONTRACT_ADDRESS_ON_TRON,
+                        "transfer(address,uint256)",
+                        {},
+                        [{ type:"address", value: receipentAddress }, { type: "uint256", value: amount * 10 ** 6 }],
+                        senderAddress,
+                    );
+                    const signedTx = await tronWeb.trx.sign(unsignedTransaction.transaction, senderPrivateKey);
                     return await tronWeb.trx.sendRawTransaction(signedTx);
                 }
             }
