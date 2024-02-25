@@ -117,6 +117,7 @@ async function sendMoneyOnBlockChain(network, nodeURL, currency, senderAddress, 
             const tronWeb = new TronWeb({
                 fullHost: process.env.TRON_NODE_BASE_API_URL,
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
+                privateKey: process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
             });
             return "";
         }
