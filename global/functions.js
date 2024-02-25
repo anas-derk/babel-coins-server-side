@@ -80,11 +80,11 @@ async function getBalance(network, currency, accountAddress) {
     }
 }
 
-async function sendMoneyOnBlockChain(network, nodeURL, currency, senderAddress, receipentAddress, amount, senderPrivateKey){
+async function sendMoneyOnBlockChain(network, currency, senderAddress, receipentAddress, amount, senderPrivateKey){
     try{
         if (network === "ETHEREUM" || network === "POLYGON" || network === "BSC") {
             const { Web3 } = require("web3");
-            const web3 = new Web3(nodeURL);
+            const web3 = new Web3(`${process.env.ETHEREUM_NODE_BASE_API_URL}/${process.env.ETHEREUM_NODE_API_KEY}`);
             const gasPriceInWei = await web3.eth.getGasPrice();
             switch(currency) {
                 case "ether": {
@@ -119,7 +119,13 @@ async function sendMoneyOnBlockChain(network, nodeURL, currency, senderAddress, 
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
                 privateKey: process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
             });
-            return "";
+            switch(currency){
+                case "trx": {
+                    const tx = await tronWeb.trx;
+                    console.log(tx);
+                    return "";
+                }
+            }
         }
         return "Sorry, Invalid Network Name !!";
     }

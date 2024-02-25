@@ -313,6 +313,32 @@ async function sendMoney(userId, transactionData) {
                         }
                     }
                 }
+                case "TRON": {
+                    switch(transactionData.currency) {
+                        case "TRX": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                0,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                0.8,
+                            );
+                        }
+                        case "USDT": {
+                            return await updateUserBalance(
+                                userId,
+                                user.balances,
+                                1,
+                                transactionData.network,
+                                transactionData.currency,
+                                transactionData.amount,
+                                5,
+                            );
+                        }
+                    }
+                }
             }
         }
         return {

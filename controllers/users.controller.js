@@ -98,7 +98,6 @@ async function postSendMoney(req, res) {
             await res.status(400).json("Please Send Amount !!");
             return;
         }
-        let result;
         switch(transactionData.network) {
             case "ETHEREUM": {
                 switch (transactionData.currency) {
@@ -108,13 +107,11 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        result = await sendMoney(userId, transactionData);
-                        await res.json(result);
+                        await res.json(await sendMoney(userId, transactionData));
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
-                                process.env.ETHEREUM_NODE_BASE_API_URL,
                                 "ether",
                                 process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
                                 transactionData.receipentAddress,
@@ -131,13 +128,11 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        result = await sendMoney(userId, transactionData);
-                        await res.json(result);
+                        await res.json(await sendMoney(userId, transactionData));
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
-                                process.env.ETHEREUM_NODE_BASE_API_URL,
                                 "usdt",
                                 process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
                                 transactionData.receipentAddress,
@@ -155,6 +150,39 @@ async function postSendMoney(req, res) {
                 }
                 break;
             }
+            case "TRON": {
+                switch (transactionData.currency) {
+                    case "TRX": {
+                        if (transactionData.amount < 1) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
+                            return;
+                        }
+                        const { sendMoney } = require("../models/users.model");
+                        await res.json(await sendMoney(userId, transactionData));
+                        if (!result.error) {
+                            const { sendMoneyOnBlockChain } = require("../global/functions");
+                            const transactionHash = await sendMoneyOnBlockChain(
+                                transactionData.network,
+                                "trx",
+                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                transactionData.receipentAddress,
+                                transactionData.amount,
+                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                            );
+                            console.log(transactionHash);
+                        }
+                        break;
+                    }
+                    case "USDT": {
+                        if (transactionData.amount < 10) {
+                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
+                            return;
+                        }
+                        break;
+                    }
+                }
+                break;
+            }
             default: {
                 await res.status(400).json("Please Send Valid Network Name !!");
                 return;
@@ -163,8 +191,8 @@ async function postSendMoney(req, res) {
     }
     catch(err) {
         console.log(err);
-        if (!err.message.includes("insufficient funds")) await res.status(500).json(err);
-        else console.log(err);
+        // if (!err.message.includes("insufficient funds")) await res.status(500).json(err);
+        // else console.log(err);
     }
 }
 
