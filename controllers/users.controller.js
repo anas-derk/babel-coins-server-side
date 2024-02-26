@@ -69,6 +69,7 @@ async function postCreateUserAccount(req, res) {
                         expiresIn: "1h",
                     });
                     await res.json({ ...result, data: { ...result.data, token }});
+                    return;
                 }
                 await res.json(result);
             }
@@ -81,7 +82,6 @@ async function postCreateUserAccount(req, res) {
         }
     }
     catch(err) {
-        console.log(err);
         await res.status(500).json(err);
     }
 }
