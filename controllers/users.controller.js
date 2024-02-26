@@ -10,7 +10,19 @@ async function getUserLogin(req, res) {
             if (isEmail(email)) {
                 const { login } = require("../models/users.model");
                 const result = await login(email.toLowerCase(), password);
-                await res.json(result);
+                const jwt = require("jsonwebtoken");
+                if (!result.error) {
+                    const token = jwt.sign(result.data, process.env.secretKey, {
+                        expiresIn: "1h",
+                    });
+                    await res.json({
+                        msg: result.msg,
+                        error: result.error,
+                        data: {
+                            token,
+                        },
+                    });
+                }
             } else {
                 // Return Error Msg If Email Is Not Valid
                 await res.status(400).json("Error, This Is Not Email Valid !!");
@@ -20,6 +32,7 @@ async function getUserLogin(req, res) {
         }
     }
     catch(err) {
+        console.log(err);
         await res.status(500).json(err);
     }
 }
