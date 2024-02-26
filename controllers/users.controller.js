@@ -10,9 +10,9 @@ async function getUserLogin(req, res) {
             if (isEmail(email)) {
                 const { login } = require("../models/users.model");
                 const result = await login(email.toLowerCase(), password);
-                const jwt = require("jsonwebtoken");
+                const { sign } = require("jsonwebtoken");
                 if (!result.error) {
-                    const token = jwt.sign(result.data, process.env.secretKey, {
+                    const token = sign(result.data, process.env.secretKey, {
                         expiresIn: "1h",
                     });
                     await res.json({
@@ -22,7 +22,9 @@ async function getUserLogin(req, res) {
                             token,
                         },
                     });
+                    return;
                 }
+                await res.json(result);
             } else {
                 // Return Error Msg If Email Is Not Valid
                 await res.status(400).json("Error, This Is Not Email Valid !!");
@@ -32,7 +34,6 @@ async function getUserLogin(req, res) {
         }
     }
     catch(err) {
-        console.log(err);
         await res.status(500).json(err);
     }
 }
@@ -62,6 +63,13 @@ async function postCreateUserAccount(req, res) {
             if (isEmail(email)) {
                 const { createNewUser } = require("../models/users.model");
                 const result = await createNewUser(email.toLowerCase());
+                if (!result.error) {
+                    const { sign } = require("jsonwebtoken");
+                    const token = sign(result, process.env.secretKey, {
+                        expiresIn: "1h",
+                    });
+                    await res.json({ ...result, data: { ...result.data, token }});
+                }
                 await res.json(result);
             }
             else {
