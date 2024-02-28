@@ -38,13 +38,13 @@ async function getUserLogin(req, res) {
     }
 }
 
-async function getAllAccounts(req, res) {
+async function getAllBalances(req, res) {
     try{
         const userId = req.params.userId;
         if (!userId) await res.status(400).json("Please Send User Id !!");
         else {
-            const { getAllAccountsForUser } = require("../models/users.model");
-            await res.json(await getAllAccountsForUser(userId));
+            const { getAllBalances } = require("../models/users.model");
+            await res.json(await getAllBalances(userId));
         }
     }
     catch(err) {
@@ -237,7 +237,7 @@ async function postSendMoney(req, res) {
 
 module.exports = {
     getUserLogin,
-    getAllAccounts,
+    getAllBalances,
     postCreateUserAccount,
     putUpdateUserData,
     postSendMoney,

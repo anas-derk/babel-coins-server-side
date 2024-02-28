@@ -45,7 +45,7 @@ async function login(email, password) {
     }
 }
 
-async function getAllAccountsForUser(userId) {
+async function getAllBalances(userId) {
     try {
         // Connect To DB
         await mongoose.connect(process.env.DB_URL);
@@ -54,19 +54,19 @@ async function getAllAccountsForUser(userId) {
         await mongoose.disconnect();
         if (user) {
             const { getBalance } = require("../global/functions");
-            let allAccounts = [];
-            for (let account of user.accounts) {
+            let allBalances = [];
+            for (let i = 0; i < user.accounts.length; i++) {
                 allAccounts.push({
-                    currencyName: account.currencyName,
-                    network: account.network,
-                    address: account.address,
-                    balance: await getBalance(account.network, account.currencyName, account.address),
+                    currencyName: user.balances[i].currencyName,
+                    network: user.accounts[i].network,
+                    address: user.accounts[i].address,
+                    balance: await getBalance(user.accounts[i].network, user.balances[i].currencyName, user.accounts[i].address),
                 });
             }
             return {
-                msg: `Get All Account For User Id: ${userId} Process Has Been Successfully !!`,
+                msg: `Get All Balances For User Id: ${userId} Process Has Been Successfully !!`,
                 error: false,
-                data: allAccounts,
+                data: allBalances,
             };
         } else {
             return {
@@ -356,7 +356,7 @@ async function sendMoney(userId, transactionData) {
 
 module.exports = {
     login,
-    getAllAccountsForUser,
+    getAllBalances,
     createNewUser,
     sendMoney,
 }

@@ -4,7 +4,7 @@ const usersController = require("../controllers/users.controller");
 
 usersRouter.get("/login", usersController.getUserLogin);
 
-usersRouter.get("/all-accounts/:userId", usersController.getAllAccounts);
+usersRouter.get("/all-balances/:userId", usersController.getAllBalances);
 
 usersRouter.post("/create-new-account", usersController.postCreateUserAccount);
 
