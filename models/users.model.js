@@ -53,14 +53,14 @@ async function getAllBalances(userId) {
         const user = await userModel.findById(userId);
         await mongoose.disconnect();
         if (user) {
-            const { getBalance } = require("../global/functions");
+            const { getBalanceOnBlockChain } = require("../global/functions");
             let allBalances = [];
             for (let i = 0; i < user.accounts.length; i++) {
-                allAccounts.push({
+                allBalances.push({
                     currencyName: user.balances[i].currencyName,
                     network: user.accounts[i].network,
                     address: user.accounts[i].address,
-                    balance: await getBalance(user.accounts[i].network, user.balances[i].currencyName, user.accounts[i].address),
+                    balance: await getBalanceOnBlockChain(user.accounts[i].network, user.balances[i].currencyName, user.accounts[i].address),
                 });
             }
             return {

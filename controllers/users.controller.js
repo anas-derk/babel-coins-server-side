@@ -40,14 +40,17 @@ async function getUserLogin(req, res) {
 
 async function getAllBalances(req, res) {
     try{
-        const userId = req.params.userId;
-        if (!userId) await res.status(400).json("Please Send User Id !!");
+        const token = req.headers.authorization;
+        if (!token) await res.status(400).json("Please Send JWT For User !!");
         else {
+            const { verify } = require("jsonwebtoken");
+            const result = verify(token, process.env.secretKey);
             const { getAllBalances } = require("../models/users.model");
-            await res.json(await getAllBalances(userId));
+            await res.json(await getAllBalances(result._id));
         }
     }
     catch(err) {
+        console.log(err);
         await res.status(500).json(err);
     }
 }

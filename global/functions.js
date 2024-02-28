@@ -47,7 +47,7 @@ function sendCodeToUserEmail(email) {
     });
 }
 
-async function getBalance(network, currency, accountAddress) {
+async function getBalanceOnBlockChain(network, currency, accountAddress) {
     try {
         let balance = 0;
         if (network === "TRON") {
@@ -55,7 +55,7 @@ async function getBalance(network, currency, accountAddress) {
             const tronWeb = new TronWeb({
                 fullHost: process.env.TRON_NODE_BASE_API_URL,
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY},
-                privateKey: "642688994e74d517ccda16710d44f3fa1d96a7ecf7eb5a16fadc3055e427766a",
+                privateKey: "U2FsdGVkX1+1Mwk+Z1WajOhZVUbJnJNHVZHsyiVW5pUv5fjTTj7AZOuLlyJgafbq3YbMysrErZaGz/7NSw/TKSRBemxIDJjzwQhIS6QwpALvY/ZndVE0GYXS2hmP+Y9P",
             });
             switch (currency) {
                 case "TRX": {
@@ -82,7 +82,6 @@ async function getBalance(network, currency, accountAddress) {
 
 async function sendMoneyOnBlockChain(network, currency, senderAddress, receipentAddress, amount, senderPrivateKey){
     try{
-        console.log()
         if (network === "ETHEREUM" || network === "POLYGON" || network === "BSC") {
             const { Web3 } = require("web3");
             const web3 = new Web3(`${process.env.ETHEREUM_NODE_BASE_API_URL}/${process.env.ETHEREUM_NODE_API_KEY}`);
@@ -118,7 +117,7 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
             const tronWeb = new TronWeb({
                 fullHost: process.env.TRON_NODE_BASE_API_URL,
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
-                privateKey: process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                privateKey: "U2FsdGVkX1+1Mwk+Z1WajOhZVUbJnJNHVZHsyiVW5pUv5fjTTj7AZOuLlyJgafbq3YbMysrErZaGz/7NSw/TKSRBemxIDJjzwQhIS6QwpALvY/ZndVE0GYXS2hmP+Y9P",
             });
             switch(currency){
                 case "trx": {
@@ -150,6 +149,6 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
 module.exports = {
     isEmail,
     sendCodeToUserEmail,
-    getBalance,
+    getBalanceOnBlockChain,
     sendMoneyOnBlockChain,
 }
