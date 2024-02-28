@@ -101,11 +101,13 @@ async function putUpdateUserData(req, res) {
 async function postSendMoney(req, res) {
     try{
         const transactionData = req.body;
-        const userId = req.params.userId;
-        if (!userId){
-            await res.status(400).json("Please Send User Id !!");
+        const token = req.headers.authorization;
+        if (!token) {
+            await res.status(400).json("Please Send JWT For User !!");
             return;
         }
+        const { verify } = require("jsonwebtoken");
+        const result = verify(token, process.env.secretKey);
         if (!transactionData.network) {
             await res.status(400).json("Please Send Network Name !!");
             return;
@@ -131,7 +133,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(userId, transactionData);
+                        const result = await sendMoney(result._id, transactionData);
                         await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -153,7 +155,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(userId, transactionData);
+                        const result = await sendMoney(result._id, transactionData);
                         await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -180,7 +182,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(userId, transactionData);
+                        const result = await sendMoney(result._id, transactionData);
                         await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -202,7 +204,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(userId, transactionData);
+                        const result = await sendMoney(result._id, transactionData);
                         await res.json(result);
                         if (!result.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
