@@ -12,4 +12,6 @@ usersRouter.post("/update-user-data", usersController.putUpdateUserData);
 
 usersRouter.post("/send-money/:userId", usersController.postSendMoney);
 
+usersRouter.post("/receive-money-on-wallet", usersController.postReceiveMoneyOnWallet);
+
 module.exports = usersRouter;
