@@ -91,6 +91,7 @@ async function postCreateUserAccount(req, res) {
         }
     }
     catch(err) {
+        console.log(err);
         await res.status(500).json(err);
     }
 }
