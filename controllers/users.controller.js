@@ -50,7 +50,13 @@ async function getAllBalances(req, res) {
         }
     }
     catch(err) {
-        console.log(err);
+        if (err.message === "jwt expired") {
+            await res.status(400).json({
+                msg: `Sorry, JWT Expired, Please Re-Login !!`,
+                error: true,
+                data: [],
+            })
+        }
         await res.status(500).json(err);
     }
 }
@@ -240,10 +246,15 @@ async function postSendMoney(req, res) {
     }
 }
 
+async function postReceiveMoneyOnWallet(req, res) {
+    console.log("aa");
+}
+
 module.exports = {
     getUserLogin,
     getAllBalances,
     postCreateUserAccount,
     putUpdateUserData,
     postSendMoney,
+    postReceiveMoneyOnWallet,
 }

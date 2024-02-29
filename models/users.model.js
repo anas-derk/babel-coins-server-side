@@ -53,20 +53,31 @@ async function getAllBalances(userId) {
         const user = await userModel.findById(userId);
         await mongoose.disconnect();
         if (user) {
-            const { getBalanceOnBlockChain } = require("../global/functions");
-            let allBalances = [];
-            for (let i = 0; i < user.accounts.length; i++) {
-                allBalances.push({
-                    currencyName: user.balances[i].currencyName,
-                    network: user.accounts[i].network,
-                    address: user.accounts[i].address,
-                    balance: await getBalanceOnBlockChain(user.accounts[i].network, user.balances[i].currencyName, user.accounts[i].address),
-                });
+            const { get } = require("axios");
+            const res = await get(`${process.env.TRON_NODE_BASE_API_URL}/v1/accounts/TNZwdQG7iM4iBi4Yii8EEnvVMAX2wDxGiR/transactions?only_confirmed=true`);
+            const result = await res.data;
+            console.log(result);
+            let lastTransactionId = "";
+            if (result.success) {
+                for(let i = 0; i < result.data.length; i++) {
+                    lastTransactionId = result.data[i].txID;
+                    
+                }
             }
+            // const { getBalanceOnBlockChain } = require("../global/functions");
+            // let allBalances = [];
+            // for (let i = 0; i < user.accounts.length; i++) {
+            //     allBalances.push({
+            //         currencyName: user.balances[i].currencyName,
+            //         network: user.accounts[i].network,
+            //         address: user.accounts[i].address,
+            //         balance: await getBalanceOnBlockChain(user.accounts[i].network, user.balances[i].currencyName, user.accounts[i].address),
+            //     });
+            // }
             return {
                 msg: `Get All Balances For User Id: ${userId} Process Has Been Successfully !!`,
                 error: false,
-                data: allBalances,
+                data: [],
             };
         } else {
             return {
@@ -186,7 +197,7 @@ async function createNewUser(email) {
             // Disconnect In DB
             await mongoose.disconnect();
             return {
-                msg: "Ok !!, Create New User Is Successfuly !!", error: false, data: {
+                msg: "Ok !!, Create New User Has Been Successfuly !!", error: false, data: {
                     _id: newUserData._id,
                     email,
                     password: generatedPassword,

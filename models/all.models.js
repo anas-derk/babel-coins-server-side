@@ -59,10 +59,14 @@ const userSchema = mongoose.Schema({
                 type: String,
                 required: true,
             },
-            balance: {
+            validDepositeBalance: {
                 type: Number,
                 default: 0,
             },
+            invalidDepositeBalance: {
+                type: Number,
+                default: 0,
+            }
         }
     ],
     isVerified: {
@@ -72,6 +76,10 @@ const userSchema = mongoose.Schema({
     createdDate: {
         type: Date,
         default: Date.now(),
+    },
+    lastTransactionId: {
+        type: String,
+        default: "",
     }
 });
 
