@@ -248,7 +248,7 @@ async function postSendMoney(req, res) {
 }
 
 async function postReceiveMoneyOnWallet(req, res) {
-    console.log("yes");
+    console.log("Tron");
     await res.json("yes");
 }
 
