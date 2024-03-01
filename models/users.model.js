@@ -15,15 +15,19 @@ async function login(email, password) {
         if (user) {
             // Check From Password
             const isTruePassword = await bcrypt.compare(password, user.password);
+            if (isTruePassword) {
+                await userModel.updateOne({ email }, { dateOfLastLogin: Date.now() });
+                await mongoose.disconnect();
+                return {
+                    msg: "login successfully !!",
+                    error: false,
+                    data: {
+                        _id: user._id,
+                        isVerified: user.isVerified,
+                    }
+                };
+            }
             await mongoose.disconnect();
-            if (isTruePassword) return {
-                msg: "login successfully !!",
-                error: false,
-                data: {
-                    _id: user._id,
-                    isVerified: user.isVerified,
-                }
-            };
             return {
                 msg: "Sorry, Email Or Password Incorrect !!",
                 error: true,

@@ -77,6 +77,10 @@ const userSchema = mongoose.Schema({
         type: Date,
         default: Date.now(),
     },
+    dateOfLastLogin: {
+        type: Date,
+        default: Date.now(),
+    },
     lastTransactionId: {
         type: String,
         default: "",

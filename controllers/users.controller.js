@@ -74,7 +74,10 @@ async function postCreateUserAccount(req, res) {
                 const result = await createNewUser(email.toLowerCase());
                 if (!result.error) {
                     const { sign } = require("jsonwebtoken");
-                    const token = sign(result, process.env.secretKey, {
+                    const token = sign({
+                        _id: result.data._id,
+                        isVerified: false,
+                    }, process.env.secretKey, {
                         expiresIn: "1h",
                     });
                     await res.json({ ...result, data: { ...result.data, token }});
@@ -110,7 +113,7 @@ async function postSendMoney(req, res) {
         const transactionData = req.body;
         const token = req.headers.authorization;
         if (!token) {
-            await res.status(400).json("Please Send JWT For User !!");
+            await res.status(403).json("Please Send JWT For User !!");
             return;
         }
         const { verify } = require("jsonwebtoken");
@@ -133,6 +136,15 @@ async function postSendMoney(req, res) {
         }
         switch(transactionData.network) {
             case "TRON": {
+                const TronWeb = require("tronweb");
+                if (!TronWeb.isAddress(transactionData.receipentAddress)) {
+                    await res.status(400).json({
+                        msg: "Please Send Valid Receipent Address !!",
+                        error: true,
+                        data: {}
+                    });
+                    return;
+                }
                 switch (transactionData.currency) {
                     case "TRX": {
                         if (transactionData.amount < 30) {
@@ -140,9 +152,9 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(result._id, transactionData);
-                        await res.json(result);
-                        if (!result.error) {
+                        const result1 = await sendMoney(result._id, transactionData);
+                        await res.json(result1);
+                        if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
@@ -162,9 +174,9 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(result._id, transactionData);
-                        await res.json(result);
-                        if (!result.error) {
+                        const result1 = await sendMoney(result._id, transactionData);
+                        await res.json(result1);
+                        if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
@@ -182,6 +194,15 @@ async function postSendMoney(req, res) {
                 break;
             }
             case "ETHEREUM": {
+                const web3 = require("web3");
+                if(!web3.utils.isAddress(transactionData.receipentAddress)) {
+                    await res.status(400).json({
+                        msg: "Please Send Valid Receipent Address !!",
+                        error: true,
+                        data: {}
+                    });
+                    return;
+                }
                 switch (transactionData.currency) {
                     case "ETHER": {
                         if (transactionData.amount < 0.02) {
@@ -189,9 +210,9 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(result._id, transactionData);
-                        await res.json(result);
-                        if (!result.error) {
+                        const result1 = await sendMoney(result._id, transactionData);
+                        await res.json(result1);
+                        if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
@@ -211,9 +232,9 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result = await sendMoney(result._id, transactionData);
-                        await res.json(result);
-                        if (!result.error) {
+                        const result1 = await sendMoney(result._id, transactionData);
+                        await res.json(result1);
+                        if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
                             const transactionHash = await sendMoneyOnBlockChain(
                                 transactionData.network,
@@ -242,8 +263,8 @@ async function postSendMoney(req, res) {
     }
     catch(err) {
         console.log(err);
-        // if (!err.message.includes("insufficient funds")) await res.status(500).json(err);
-        // else console.log(err);
+        if (!err.message.includes("insufficient funds")) await res.status(500).json(err);
+        else console.log(err);
     }
 }
 
