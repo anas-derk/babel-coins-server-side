@@ -148,7 +148,11 @@ async function postSendMoney(req, res) {
                 switch (transactionData.currency) {
                     case "TRX": {
                         if (transactionData.amount < 30) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 30 TRX !!");
+                            await res.status(400).json({
+                                msg: "Please Send Amount Greater Than Or Equual 30 TRX !!",
+                                error: true,
+                                data: {},
+                            });
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -170,7 +174,11 @@ async function postSendMoney(req, res) {
                     }
                     case "USDT": {
                         if (transactionData.amount < 10) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 10 USDT !!");
+                            await res.status(400).json({
+                                msg: "Please Send Amount Greater Than Or Equual 10 USDT !!",
+                                error: true,
+                                data: {},
+                            });
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -206,7 +214,11 @@ async function postSendMoney(req, res) {
                 switch (transactionData.currency) {
                     case "ETHER": {
                         if (transactionData.amount < 0.02) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 0.02 ETHER !!");
+                            await res.status(400).json({
+                                msg: "Please Send Amount Greater Than Or Equual 0.02 ETHER !!",
+                                error: true,
+                                data: {},
+                            });
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -228,7 +240,11 @@ async function postSendMoney(req, res) {
                     }
                     case "USDT": {
                         if (transactionData.amount < 5) {
-                            await res.status(400).json("Please Send Amount Greater Than Or Equual 5 USDT !!");
+                            await res.status(400).json({
+                                msg: "Please Send Amount Greater Than Or Equual 5 USDT !!",
+                                error: true,
+                                data: {},
+                            });
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
