@@ -286,7 +286,7 @@ async function postSendMoney(req, res) {
 
 async function postReceiveMoneyOnWallet(req, res) {
     try{
-        console.log("Ethereum New");
+        console.log("Polygon New");
         await res.json("yes");
     }
     catch(err) {
