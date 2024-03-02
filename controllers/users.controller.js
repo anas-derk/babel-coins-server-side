@@ -290,7 +290,8 @@ async function postReceiveMoneyOnWallet(req, res) {
         await res.json("yes");
     }
     catch(err) {
-        await res.status(500).json(err.message);
+        console.log(err.message);
+        await res.status(500).json(err);
     }
 }
 
