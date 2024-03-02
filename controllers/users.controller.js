@@ -285,7 +285,7 @@ async function postSendMoney(req, res) {
 }
 
 async function postReceiveMoneyOnWallet(req, res) {
-    console.log("Tron New");
+    console.log("Ethereum New");
     await res.json("yes");
 }
 
