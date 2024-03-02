@@ -285,8 +285,13 @@ async function postSendMoney(req, res) {
 }
 
 async function postReceiveMoneyOnWallet(req, res) {
-    console.log("Ethereum New");
-    await res.json("yes");
+    try{
+        console.log("Ethereum New");
+        await res.json("yes");
+    }
+    catch(err) {
+        await res.status(500).json(err.message);
+    }
 }
 
 module.exports = {
