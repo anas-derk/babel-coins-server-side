@@ -41,7 +41,11 @@ async function getUserLogin(req, res) {
 async function getAllBalances(req, res) {
     try{
         const token = req.headers.authorization;
-        if (!token) await res.status(400).json("Please Send JWT For User !!");
+        if (!token) await res.status(400).json({
+            msg: "Please Send JWT For User !!",
+            error: true,
+            data: [],
+        });
         else {
             const { verify } = require("jsonwebtoken");
             const result = verify(token, process.env.secretKey);
@@ -57,7 +61,11 @@ async function getAllBalances(req, res) {
                 data: [],
             })
         }
-        await res.status(500).json(err);
+        await res.status(500).json({
+            error: "Internal Server Error",
+            error: true,
+            data: [],
+        });
     }
 }
 

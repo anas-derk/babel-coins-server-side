@@ -57,31 +57,10 @@ async function getAllBalances(userId) {
         const user = await userModel.findById(userId);
         await mongoose.disconnect();
         if (user) {
-            const { get } = require("axios");
-            const res = await get(`${process.env.TRON_NODE_BASE_API_URL}/v1/accounts/TNZwdQG7iM4iBi4Yii8EEnvVMAX2wDxGiR/transactions?only_confirmed=true`);
-            const result = await res.data;
-            console.log(result);
-            let lastTransactionId = "";
-            if (result.success) {
-                for(let i = 0; i < result.data.length; i++) {
-                    lastTransactionId = result.data[i].txID;
-                    
-                }
-            }
-            // const { getBalanceOnBlockChain } = require("../global/functions");
-            // let allBalances = [];
-            // for (let i = 0; i < user.accounts.length; i++) {
-            //     allBalances.push({
-            //         currencyName: user.balances[i].currencyName,
-            //         network: user.accounts[i].network,
-            //         address: user.accounts[i].address,
-            //         balance: await getBalanceOnBlockChain(user.accounts[i].network, user.balances[i].currencyName, user.accounts[i].address),
-            //     });
-            // }
             return {
                 msg: `Get All Balances For User Id: ${userId} Process Has Been Successfully !!`,
                 error: false,
-                data: [],
+                data: user.balances,
             };
         } else {
             return {
