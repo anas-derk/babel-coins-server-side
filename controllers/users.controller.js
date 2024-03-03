@@ -306,9 +306,16 @@ async function postSendMoney(req, res) {
         }
     }
     catch(err) {
-        console.log(err);
-        if (!err.message.includes("insufficient funds")) await res.status(500).json(err);
-        else console.log(err);
+        if (!err.message.includes("insufficient funds")) await res.status(500).json({
+            msg: err.message,
+            error: true,
+            data: {},
+        });
+        else await res.status(500).json({
+            msg: err.message,
+            error: true,
+            data: {},
+        });
     }
 }
 
@@ -317,13 +324,87 @@ async function postReceiveMoneyOnWallet(req, res) {
         const receiveDetails = req.query;
         console.log(receiveDetails);
         if (!receiveDetails.address) {
-
+            await res.status(400).json({
+                msg: "Please Send Receipent Address !!",
+                error: true,
+                data: {},
+            });
+            return;
+        }
+        if (!receiveDetails.chain) {
+            await res.status(400).json({
+                msg: "Please Send Currency Name !!",
+                error: true,
+                data: {},
+            });
+            return;
+        }
+        switch(receiveDetails.chain) {
+            case "TRON": {
+                const TronWeb = require("tronweb");
+                if (!TronWeb.isAddress(receiveDetails.address)) {
+                    await res.status(400).json({
+                        msg: "Please Send Valid Receipent Address !!",
+                        error: true,
+                        data: {},
+                    });
+                    return;
+                }
+                break;
+            }
+            case "ETH": {
+                const web3 = require("web3");
+                if(!web3.utils.isAddress(receiveDetails.address)) {
+                    await res.status(400).json({
+                        msg: "Please Send Valid Receipent Address !!",
+                        error: true,
+                        data: {},
+                    });
+                    return;
+                }
+                break;
+            }
+            case "MATIC": {
+                const web3 = require("web3");
+                if(!web3.utils.isAddress(receiveDetails.address)) {
+                    await res.status(400).json({
+                        msg: "Please Send Valid Receipent Address !!",
+                        error: true,
+                        data: {},
+                    });
+                    return;
+                }
+                break;
+            }
+            case "BSC": {
+                const web3 = require("web3");
+                if(!web3.utils.isAddress(receiveDetails.address)) {
+                    await res.status(400).json({
+                        msg: "Please Send Valid Receipent Address !!",
+                        error: true,
+                        data: {},
+                    });
+                    return;
+                }
+                break;
+            }
+            default: {
+                await res.status(400).json({
+                    msg: "Please Send Valid Network Name !!",
+                    error: true,
+                    data: {},
+                });
+                return;
+            }
         }
         await res.json("yes");
     }
     catch(err) {
-        console.log(err.message);
-        await res.status(500).json(err);
+        await res.status(500).json({
+            msg: err.message,
+            error: true,
+            data: {},
+        });
     }
 }
 
