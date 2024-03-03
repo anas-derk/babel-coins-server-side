@@ -121,25 +121,45 @@ async function postSendMoney(req, res) {
         const transactionData = req.body;
         const token = req.headers.authorization;
         if (!token) {
-            await res.status(403).json("Please Send JWT For User !!");
+            await res.status(403).json({
+                msg: "Please Send JWT For User !!",
+                error: true,
+                data: {},
+            });
             return;
         }
         const { verify } = require("jsonwebtoken");
         const result = verify(token, process.env.secretKey);
         if (!transactionData.network) {
-            await res.status(400).json("Please Send Network Name !!");
+            await res.status(400).json({
+                msg: "Please Send Network Name !!",
+                error: true,
+                data: {},
+            });
             return;
         }
         if (!transactionData.currency) {
-            await res.status(400).json("Please Send Currency Name !!");
+            await res.status(400).json({
+                msg: "Please Send Currency Name !!",
+                error: true,
+                data: {},
+            });
             return;
         }
         if (!transactionData.receipentAddress) {
-            await res.status(400).json("Please Send Receipent Address !!");
+            await res.status(400).json({
+                msg: "Please Send Receipent Address !!",
+                error: true,
+                data: {},
+            });
             return;
         }
         if (!transactionData.amount) {
-            await res.status(400).json("Please Send Amount !!");
+            await res.status(400).json({
+                msg: "Please Send Amount !!",
+                error: true,
+                data: {},
+            });
             return;
         }
         switch(transactionData.network) {
@@ -294,7 +314,11 @@ async function postSendMoney(req, res) {
 
 async function postReceiveMoneyOnWallet(req, res) {
     try{
-        console.log("Polygon New");
+        const receiveDetails = req.query;
+        console.log(receiveDetails);
+        if (!receiveDetails.address) {
+
+        }
         await res.json("yes");
     }
     catch(err) {
