@@ -113,22 +113,7 @@ async function createNewUser(email) {
             const bscAccount = web3ForBSC.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
             const cryptoJS = require("crypto-js");
             const encryptedPrivateKeyForEthereum = cryptoJS.AES.encrypt(ethereumAccount.privateKey, process.env.secretKey).toString();
-            const { post } = require("axios");
-            const res = await post(`${process.env.TATUM_BASE_API_URL}/subscription?type=mainnet`, {
-                type: "ADDRESS_EVENT",
-                attr: {
-                    address: "0xc20b56321b9663211A23D365d318f2749D46aDaC",
-                    chain: "BTC",
-                    url: "https://api.babelcoins.com/users/receive-money-on-wallet"
-                }
-            }, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": process.env.TATUM_API_KEY
-                }
-            });
-            const result = await res.data;
-            console.log(result)
+            const { createNewSubscriptionInTatumNotificationsService } = require("../global/functions");
             const newUser = new userModel({
                 email,
                 password: await bcrypt.hash(generatedPassword, 10),
@@ -139,21 +124,25 @@ async function createNewUser(email) {
                         network: "TRON",
                         address: tronAccount.address.base58,
                         privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
+                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(tronAccount.address.base58, "TRON"),
                     },
                     {
                         network: "ETHEREUM",
                         address: ethereumAccount.address,
                         privateKey: encryptedPrivateKeyForEthereum,
+                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "ETH"),
                     },
                     {
                         network: "POLYGON",
                         address: polygonAccount.address,
                         privateKey: encryptedPrivateKeyForEthereum,
+                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "MATIC"),
                     },
                     {
                         network: "BSC",
                         address: bscAccount.address,
                         privateKey: encryptedPrivateKeyForEthereum,
+                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "BSC"),
                     },
                 ],
                 balances: [

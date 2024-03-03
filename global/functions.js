@@ -146,9 +146,33 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
     }
 }
 
+async function createNewSubscriptionInTatumNotificationsService(address, chain) {
+    try{
+        const { post } = require("axios");
+        const res = await post(`${process.env.TATUM_BASE_API_URL}/subscription?type=mainnet`, {
+            type: "ADDRESS_EVENT",
+            attr: {
+                address,
+                chain,
+                url: `https://api.babelcoins.com/users/receive-money-on-wallet?address=${address}&chain=${chain}`
+            },
+        }, {
+            headers: {
+                "Content-Type": "application/json",
+                "x-api-key": process.env.TATUM_API_KEY
+            }
+        });
+        return await res.data.id;
+    }
+    catch(err) {
+        throw Error(err);
+    }
+}
+
 module.exports = {
     isEmail,
     sendCodeToUserEmail,
     getBalanceOnBlockChain,
     sendMoneyOnBlockChain,
+    createNewSubscriptionInTatumNotificationsService,
 }

@@ -47,6 +47,10 @@ const userSchema = mongoose.Schema({
                 type: String,
                 required: true,
             },
+            subscriptionId: {
+                type: String,
+                required: true,
+            }
         }
     ],
     balances: [
