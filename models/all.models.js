@@ -47,10 +47,6 @@ const userSchema = mongoose.Schema({
                 type: String,
                 required: true,
             },
-            subscriptionId: {
-                type: String,
-                default: "",
-            }
         }
     ],
     balances: [
@@ -75,6 +71,18 @@ const userSchema = mongoose.Schema({
                 type: Number,
                 default: 0,
             }
+        }
+    ],
+    subscriptionIds: [
+        {
+            subscriptionIdForAddressEvents: {
+                type: String,
+                default: "",
+            },
+            subscriptionIdForNativeIncoming: {
+                type: String,
+                default: "",
+            },
         }
     ],
     isVerified: {

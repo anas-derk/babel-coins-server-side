@@ -146,11 +146,11 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
     }
 }
 
-async function createNewSubscriptionInTatumNotificationsService(address, chain, userId) {
+async function createNewSubscriptionInTatumNotificationsService(eventType, address, chain, userId) {
     try{
         const { post } = require("axios");
         const res = await post(`${process.env.TATUM_BASE_API_URL}/subscription?type=mainnet`, {
-            type: "ADDRESS_EVENT",
+            type: eventType,
             attr: {
                 address,
                 chain,

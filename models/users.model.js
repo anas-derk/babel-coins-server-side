@@ -188,30 +188,22 @@ async function createNewUser(email) {
             const newUserData = await newUser.save();
             await userModel.updateOne({ _id: newUserData._id },
                 {
-                    accounts: [
+                    subscriptionIds: [
                         {
-                            network: "TRON",
-                            address: tronAccount.address.base58,
-                            privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
-                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(tronAccount.address.base58, "TRON", newUserData._id),
+                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", tronAccount.address.base58, "TRON", newUserData._id),
+                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", tronAccount.address.base58, "TRON", newUserData._id),
                         },
                         {
-                            network: "ETHEREUM",
-                            address: ethereumAccount.address,
-                            privateKey: encryptedPrivateKeyForEthereum,
-                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "ETH", newUserData._id),
+                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", ethereumAccount.address, "ETH", newUserData._id),
+                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "ETH", newUserData._id),
                         },
                         {
-                            network: "POLYGON",
-                            address: polygonAccount.address,
-                            privateKey: encryptedPrivateKeyForEthereum,
-                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "MATIC", newUserData._id),
+                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", ethereumAccount.address, "MATIC", newUserData._id),
+                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "MATIC", newUserData._id),
                         },
                         {
-                            network: "BSC",
-                            address: bscAccount.address,
-                            privateKey: encryptedPrivateKeyForEthereum,
-                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "BSC", newUserData._id),
+                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", ethereumAccount.address, "BSC", newUserData._id),
+                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "BSC", newUserData._id),
                         },
                     ],
                 }
