@@ -14,7 +14,7 @@ async function login(email, password) {
         const user = await userModel.findOne({ email });
         if (user) {
             // Check From Password
-            const isTruePassword = await bcrypt.compare(password, user.password);
+            const isTruePassword = await compare(password, user.password);
             if (isTruePassword) {
                 await userModel.updateOne({ email }, { dateOfLastLogin: Date.now() });
                 await mongoose.disconnect();
@@ -124,25 +124,21 @@ async function createNewUser(email) {
                         network: "TRON",
                         address: tronAccount.address.base58,
                         privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
-                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(tronAccount.address.base58, "TRON"),
                     },
                     {
                         network: "ETHEREUM",
                         address: ethereumAccount.address,
                         privateKey: encryptedPrivateKeyForEthereum,
-                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "ETH"),
                     },
                     {
                         network: "POLYGON",
                         address: polygonAccount.address,
                         privateKey: encryptedPrivateKeyForEthereum,
-                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "MATIC"),
                     },
                     {
                         network: "BSC",
                         address: bscAccount.address,
                         privateKey: encryptedPrivateKeyForEthereum,
-                        subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "BSC"),
                     },
                 ],
                 balances: [
@@ -190,6 +186,36 @@ async function createNewUser(email) {
             });
             // Save The New User As Document In User Collection
             const newUserData = await newUser.save();
+            await userModel.updateOne({ _id: newUserData._id },
+                {
+                    accounts: [
+                        {
+                            network: "TRON",
+                            address: tronAccount.address.base58,
+                            privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
+                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(tronAccount.address.base58, "TRON", newUserData._id),
+                        },
+                        {
+                            network: "ETHEREUM",
+                            address: ethereumAccount.address,
+                            privateKey: encryptedPrivateKeyForEthereum,
+                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "ETH", newUserData._id),
+                        },
+                        {
+                            network: "POLYGON",
+                            address: polygonAccount.address,
+                            privateKey: encryptedPrivateKeyForEthereum,
+                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "MATIC", newUserData._id),
+                        },
+                        {
+                            network: "BSC",
+                            address: bscAccount.address,
+                            privateKey: encryptedPrivateKeyForEthereum,
+                            subscriptionId: await createNewSubscriptionInTatumNotificationsService(ethereumAccount.address, "BSC", newUserData._id),
+                        },
+                    ],
+                }
+            );
             // Disconnect In DB
             await mongoose.disconnect();
             return {
