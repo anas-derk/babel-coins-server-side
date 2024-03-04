@@ -4,7 +4,7 @@ const { mongoose, userModel } = require("../models/all.models");
 
 // require bcryptjs module for password encrypting
 
-const bcrypt = require("bcryptjs");
+const { hash, compare } = require("bcryptjs");
 
 async function login(email, password) {
     try {
@@ -116,8 +116,8 @@ async function createNewUser(email) {
             const { createNewSubscriptionInTatumNotificationsService } = require("../global/functions");
             const newUser = new userModel({
                 email,
-                password: await bcrypt.hash(generatedPassword, 10),
-                secretCode: await bcrypt.hash(generatedSecretCode, 10),
+                password: await hash(generatedPassword, 10),
+                secretCode: await hash(generatedSecretCode, 10),
                 accountName,
                 accounts: [
                     {
@@ -149,34 +149,42 @@ async function createNewUser(email) {
                     {
                         currencyName: "TRX",
                         network: "TRON",
+                        symbol: "TRX",
                     },
                     {
                         currencyName: "USDT",
                         network: "TRON",
+                        symbol: "USDT",
                     },
                     {
                         currencyName: "ETHER",
                         network: "ETHEREUM",
+                        symbol: "ETH",
                     },
                     {
                         currencyName: "USDT",
                         network: "ETHEREUM",
+                        symbol: "USDT",
                     },
                     {
                         currencyName: "MATIC",
                         network: "POLYGON",
+                        symbol: "MATIC",
                     },
                     {
                         currencyName: "USDT",
                         network: "POLYGON",
+                        symbol: "USDT",
                     },
                     {
-                        currencyName: "BTC",
+                        currencyName: "BNB",
                         network: "BSC",
+                        symbol: "BNB",
                     },
                     {
                         currencyName: "USDT",
                         network: "BSC",
+                        symbol: "USDT",
                     },
                 ],
             });

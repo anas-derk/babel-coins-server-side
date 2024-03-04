@@ -63,6 +63,10 @@ const userSchema = mongoose.Schema({
                 type: String,
                 required: true,
             },
+            symbol: {
+                type: String,
+                required: true,
+            },
             validDepositeBalance: {
                 type: Number,
                 default: 0,
