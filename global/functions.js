@@ -169,10 +169,19 @@ async function createNewSubscriptionInTatumNotificationsService(address, chain) 
     }
 }
 
+function getReponseObject(msg, isError, data) {
+    return {
+        msg,
+        error: isError,
+        data,
+    }
+}
+
 module.exports = {
     isEmail,
     sendCodeToUserEmail,
     getBalanceOnBlockChain,
     sendMoneyOnBlockChain,
     createNewSubscriptionInTatumNotificationsService,
+    getReponseObject,
 }
