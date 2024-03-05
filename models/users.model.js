@@ -190,19 +190,19 @@ async function createNewUser(email) {
                 {
                     subscriptionIds: [
                         {
-                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", tronAccount.address.base58, "TRON", newUserData._id),
+                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", tronAccount.address.base58, "TRON", newUserData._id),
                             subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", tronAccount.address.base58, "TRON", newUserData._id),
                         },
                         {
-                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", ethereumAccount.address, "ETH", newUserData._id),
+                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "ETH", newUserData._id),
                             subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "ETH", newUserData._id),
                         },
                         {
-                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", ethereumAccount.address, "MATIC", newUserData._id),
+                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "MATIC", newUserData._id),
                             subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "MATIC", newUserData._id),
                         },
                         {
-                            subscriptionIdForAddressEvents: await createNewSubscriptionInTatumNotificationsService("ADDRESS_EVENT", ethereumAccount.address, "BSC", newUserData._id),
+                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "BSC", newUserData._id),
                             subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "BSC", newUserData._id),
                         },
                     ],

@@ -75,7 +75,7 @@ const userSchema = mongoose.Schema({
     ],
     subscriptionIds: [
         {
-            subscriptionIdForAddressEvents: {
+            subscriptionIdForFungibleTokensIncoming: {
                 type: String,
                 default: "",
             },
