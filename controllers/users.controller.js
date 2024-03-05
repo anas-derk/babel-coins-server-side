@@ -355,6 +355,11 @@ async function postReceiveMoneyOnWallet(req, res) {
     }
 }
 
+async function sss(req, res) {
+    console.log(req.body);
+    await res.json("aaa");
+}
+
 module.exports = {
     getUserLogin,
     getAllBalances,
