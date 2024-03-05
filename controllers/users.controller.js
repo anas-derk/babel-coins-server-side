@@ -267,97 +267,94 @@ async function postSendMoney(req, res) {
 async function postReceiveMoneyOnWallet(req, res) {
     try{
         const receiveDetails = req.query;
-        if (!receiveDetails.address) {
-            await res.status(400).json(getReponseObject("Please Send Receipent Address !!", true, {}));
-            return;
-        }
-        if (!receiveDetails.chain) {
-            await res.status(400).json(getReponseObject("Please Send Currency Name !!", true, {}));
-            return;
-        }
-        if (!receiveDetails.userId) {
-            await res.status(400).json(getReponseObject("Please Send User Id !!", true, {}));
-            return;
-        }
-        switch(receiveDetails.chain) {
-            case "TRON": {
-                const TronWeb = require("tronweb");
-                if (!TronWeb.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
-                    return;
-                }
-                if (req.body.subscriptionType === "INCOMING_NATIVE_TX") {
-                    const { updateUserBalance } = require("../models/users.model");
-                    await res.json(
-                        await updateUserBalance(
-                            receiveDetails.userId,
-                            receiveDetails.chain,
-                            "TRX",
-                            0,
-                            Number(req.body.amount),
-                            req.body.txId,
-                        )
-                    );
-                    return;
-                }
-                if (req.body.subscriptionType === "ADDRESS_EVENT") {
-                    if (req.body.asset === "USDT_TRON") {
-                        const { updateUserBalance } = require("../models/users.model");
-                        await res.json(
-                            await updateUserBalance(
-                                receiveDetails.userId,
-                                receiveDetails.chain,
-                                "USDT",
-                                0,
-                                Number(req.body.amount),
-                                req.body.txId,
-                            )
-                        );
-                        return;
-                    }
-                    await res.status(400).json(getReponseObject("Please Send Valid Asset Name !!", true, {}));
-                    return;
-                }
-                await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
-                break;
-            }
-            case "ETH": {
-                const web3 = require("web3");
-                if(!web3.utils.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
-                    return;
-                }
-                break;
-            }
-            case "MATIC": {
-                const web3 = require("web3");
-                if(!web3.utils.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
-                    return;
-                }
-                break;
-            }
-            case "BSC": {
-                const web3 = require("web3");
-                if(!web3.utils.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
-                    return;
-                }
-                break;
-            }
-            default: {
-                await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
-            }
-        }
+        console.log(req.body);
+        await res.json("yes");
+        // if (!receiveDetails.address) {
+        //     await res.status(400).json(getReponseObject("Please Send Receipent Address !!", true, {}));
+        //     return;
+        // }
+        // if (!receiveDetails.chain) {
+        //     await res.status(400).json(getReponseObject("Please Send Currency Name !!", true, {}));
+        //     return;
+        // }
+        // if (!receiveDetails.userId) {
+        //     await res.status(400).json(getReponseObject("Please Send User Id !!", true, {}));
+        //     return;
+        // }
+        // switch(receiveDetails.chain) {
+        //     case "TRON": {
+        //         const TronWeb = require("tronweb");
+        //         if (!TronWeb.isAddress(receiveDetails.address)) {
+        //             await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+        //             return;
+        //         }
+        //         if (req.body.subscriptionType === "INCOMING_NATIVE_TX") {
+        //             const { updateUserBalance } = require("../models/users.model");
+        //             await res.json(
+        //                 await updateUserBalance(
+        //                     receiveDetails.userId,
+        //                     receiveDetails.chain,
+        //                     "TRX",
+        //                     0,
+        //                     Number(req.body.amount),
+        //                     req.body.txId,
+        //                 )
+        //             );
+        //             return;
+        //         }
+        //         if (req.body.subscriptionType === "ADDRESS_EVENT") {
+        //             if (req.body.asset === "USDT_TRON") {
+        //                 const { updateUserBalance } = require("../models/users.model");
+        //                 await res.json(
+        //                     await updateUserBalance(
+        //                         receiveDetails.userId,
+        //                         receiveDetails.chain,
+        //                         "USDT",
+        //                         0,
+        //                         Number(req.body.amount),
+        //                         req.body.txId,
+        //                     )
+        //                 );
+        //                 return;
+        //             }
+        //             await res.status(400).json(getReponseObject("Please Send Valid Asset Name !!", true, {}));
+        //             return;
+        //         }
+        //         await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
+        //         break;
+        //     }
+        //     case "ETH": {
+        //         const web3 = require("web3");
+        //         if(!web3.utils.isAddress(receiveDetails.address)) {
+        //             await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+        //             return;
+        //         }
+        //         break;
+        //     }
+        //     case "MATIC": {
+        //         const web3 = require("web3");
+        //         if(!web3.utils.isAddress(receiveDetails.address)) {
+        //             await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+        //             return;
+        //         }
+        //         break;
+        //     }
+        //     case "BSC": {
+        //         const web3 = require("web3");
+        //         if(!web3.utils.isAddress(receiveDetails.address)) {
+        //             await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+        //             return;
+        //         }
+        //         break;
+        //     }
+        //     default: {
+        //         await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
+        //     }
+        // }
     }
     catch(err) {
         await res.status(500).json(getReponseObject(err.message, true, {}));
     }
-}
-
-async function sss(req, res) {
-    console.log(req.body);
-    await res.json("aaa");
 }
 
 module.exports = {
