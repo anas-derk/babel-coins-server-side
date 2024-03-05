@@ -267,7 +267,6 @@ async function postSendMoney(req, res) {
 async function postReceiveMoneyOnWallet(req, res) {
     try{
         const receiveDetails = req.query;
-        console.log(req.body);
         if (!receiveDetails.address) {
             await res.status(400).json(getReponseObject("Please Send Receipent Address !!", true, {}));
             return;
