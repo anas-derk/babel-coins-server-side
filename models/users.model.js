@@ -228,7 +228,7 @@ async function createNewUser(email) {
     }
 }
 
-async function updateUserBalance(userId, balances, balanceItemIndex, network, currency, amount, commission){
+async function updateUserBalanceOnSendMoney(userId, balances, balanceItemIndex, network, currency, amount, commission){
     try{
         if (balances[balanceItemIndex].balance < amount + commission) {
             await mongoose.disconnect();
@@ -263,7 +263,7 @@ async function sendMoney(userId, transactionData) {
                 case "TRON": {
                     switch(transactionData.currency) {
                         case "TRX": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 0,
@@ -274,7 +274,7 @@ async function sendMoney(userId, transactionData) {
                             );
                         }
                         case "USDT": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 1,
@@ -289,7 +289,7 @@ async function sendMoney(userId, transactionData) {
                 case "ETHEREUM": {
                     switch (transactionData.currency) {
                         case "ETHER": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 2,
@@ -300,7 +300,7 @@ async function sendMoney(userId, transactionData) {
                             );
                         }
                         case "USDT": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 3,
@@ -315,7 +315,7 @@ async function sendMoney(userId, transactionData) {
                 case "POLYGON": {
                     switch (transactionData.currency) {
                         case "MATIC": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 4,
@@ -326,7 +326,7 @@ async function sendMoney(userId, transactionData) {
                             );
                         }
                         case "USDT": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 5,
@@ -341,7 +341,7 @@ async function sendMoney(userId, transactionData) {
                 case "BSC": {
                     switch (transactionData.currency) {
                         case "BNB": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 6,
@@ -352,7 +352,7 @@ async function sendMoney(userId, transactionData) {
                             );
                         }
                         case "USDT": {
-                            return await updateUserBalance(
+                            return await updateUserBalanceOnSendMoney(
                                 userId,
                                 user.balances,
                                 6,
@@ -379,9 +379,63 @@ async function sendMoney(userId, transactionData) {
     }
 }
 
+async function updateUserBalance(userId, network, currency, currencyIndex, newAmount, newTransactionId){
+    try{
+        await mongoose.connect(process.env.DB_URL);
+        const user = await userModel.findById(userId);
+        if (user) {
+            switch (network) {
+                case "TRON": {
+                    switch(currency) {
+                        case "TRX": {
+                            if (newAmount < 10) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
+                            else user.balances[currencyIndex].validDepositeBalance += newAmount;
+                            await userModel.updateOne({ _id: userId }, {
+                                balances: user.balances,
+                                lastTransactionId: newTransactionId
+                            });
+                            await mongoose.disconnect();
+                            return {
+                                msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
+                                error: false,
+                                data: user.balances,
+                            }
+                        }
+                        case "USDT": {
+                            if (newAmount < 10) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
+                            else user.balances[currencyIndex].validDepositeBalance += newAmount;
+                            await userModel.updateOne({ _id: userId }, {
+                                balances: user.balances,
+                                lastTransactionId: newTransactionId
+                            });
+                            await mongoose.disconnect();
+                            return {
+                                msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
+                                error: false,
+                                data: user.balances,
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        await mongoose.disconnect();
+        return {
+            msg: "Sorry, This Usr Is Not Found !!",
+            error: true,
+            data: {},
+        };
+    }
+    catch(err) {
+        await mongoose.disconnect();
+        throw Error(err);
+    }
+}
+
 module.exports = {
     login,
     getAllBalances,
     createNewUser,
     sendMoney,
+    updateUserBalance,
 }
