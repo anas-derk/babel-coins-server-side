@@ -315,7 +315,7 @@ async function postReceiveMoneyOnWallet(req, res) {
                         );
                         return;
                     }
-                    await res.status(400).json(getReponseObject("Please Send Valid Asset Name !!", true, {}));
+                    await res.status(200).json(getReponseObject("Please Send Valid Asset Name !!", true, {}));
                     return;
                 }
                 await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
