@@ -50,7 +50,7 @@ async function getIfUserIsLogged(req, res) {
         }
         const { verify } = require("jsonwebtoken");
         verify(token, process.env.secretKey);
-        await res.json(getReponseObject("User Is Logged !!", true, {}));
+        await res.json(getReponseObject("User Is Logged !!", false, {}));
     }
     catch(err) {
         await res.status(500).json(getReponseObject(err.message, true, {}));
