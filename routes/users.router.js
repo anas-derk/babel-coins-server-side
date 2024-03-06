@@ -4,6 +4,8 @@ const usersController = require("../controllers/users.controller");
 
 usersRouter.get("/login", usersController.getUserLogin);
 
+usersRouter.get("/is-logged", usersController.getIsLogining);
+
 usersRouter.get("/all-balances", usersController.getAllBalances);
 
 usersRouter.post("/create-new-account", usersController.postCreateUserAccount);

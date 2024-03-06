@@ -41,6 +41,22 @@ async function getUserLogin(req, res) {
     }
 }
 
+async function getIsLogining(req, res) {
+    try{
+        const token = req.headers.authorization;
+        if (!token) {
+            await res.status(400).json(getReponseObject("Please Send JWT For User !!", true, {}));
+            return;
+        }
+        const { verify } = require("jsonwebtoken");
+        verify(token, process.env.secretKey);
+        await res.json(getReponseObject("User Is Logged !!", true, {}));
+    }
+    catch(err) {
+        await res.status(500).json(getReponseObject(err.message, true, {}));
+    }
+}
+
 async function getAllBalances(req, res) {
     try{
         const token = req.headers.authorization;
@@ -393,6 +409,7 @@ async function postReceiveMoneyOnWallet(req, res) {
 }
 
 module.exports = {
+    getIsLogining,
     getUserLogin,
     getAllBalances,
     postCreateUserAccount,
