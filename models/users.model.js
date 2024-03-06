@@ -78,133 +78,133 @@ async function createNewUser(email) {
                 error: true,
                 data: {},
             };
-        } else {
-            // Create New Document From User Schema
-            const CodeGenerator = require('node-code-generator');
-            const generator = new CodeGenerator();
-            const generatedPassword = generator.generateCodes("**##*#*#")[0];
-            const generatedSecretCode = generator.generateCodes("######")[0];
-            const accountName = `B${await userModel.countDocuments({})}`;
-            const TronWeb = require("tronweb");
-            const tronWeb = new TronWeb({
-                fullHost: process.env.TRON_NODE_BASE_API_URL,
-                headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
-            });
-            const tronAccount = await tronWeb.createAccount();
-            const { Web3 } = require("web3");
-            const web3ForEthereum = new Web3(process.env.ETHEREUM_NODE_BASE_API_URL);
-            const ethereumAccount = web3ForEthereum.eth.accounts.create();
-            const web3ForPolygon = new Web3(process.env.POLYGON_NODE_BASE_API_URL);
-            const polygonAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
-            const web3ForBSC = new Web3(process.env.BINANCE_SMART_CHAIN_NODE_BASE_API_URL);
-            const bscAccount = web3ForBSC.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
-            const cryptoJS = require("crypto-js");
-            const encryptedPrivateKeyForEthereum = cryptoJS.AES.encrypt(ethereumAccount.privateKey, process.env.secretKey).toString();
-            const { createNewSubscriptionInTatumNotificationsService } = require("../global/functions");
-            const newUser = new userModel({
-                email,
-                password: await hash(generatedPassword, 10),
-                secretCode: await hash(generatedSecretCode, 10),
-                accountName,
-                accounts: [
-                    {
-                        network: "TRON",
-                        address: tronAccount.address.base58,
-                        privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
-                    },
-                    {
-                        network: "ETHEREUM",
-                        address: ethereumAccount.address,
-                        privateKey: encryptedPrivateKeyForEthereum,
-                    },
-                    {
-                        network: "POLYGON",
-                        address: polygonAccount.address,
-                        privateKey: encryptedPrivateKeyForEthereum,
-                    },
-                    {
-                        network: "BSC",
-                        address: bscAccount.address,
-                        privateKey: encryptedPrivateKeyForEthereum,
-                    },
-                ],
-                balances: [
-                    {
-                        currencyName: "TRX",
-                        network: "TRON",
-                        symbol: "TRX",
-                    },
-                    {
-                        currencyName: "USDT",
-                        network: "TRON",
-                        symbol: "USDT",
-                    },
-                    {
-                        currencyName: "ETHER",
-                        network: "ETHEREUM",
-                        symbol: "ETH",
-                    },
-                    {
-                        currencyName: "USDT",
-                        network: "ETHEREUM",
-                        symbol: "USDT",
-                    },
-                    {
-                        currencyName: "MATIC",
-                        network: "POLYGON",
-                        symbol: "MATIC",
-                    },
-                    {
-                        currencyName: "USDT",
-                        network: "POLYGON",
-                        symbol: "USDT",
-                    },
-                    {
-                        currencyName: "BNB",
-                        network: "BSC",
-                        symbol: "BNB",
-                    },
-                    {
-                        currencyName: "USDT",
-                        network: "BSC",
-                        symbol: "USDT",
-                    },
-                ],
-            });
-            // Save The New User As Document In User Collection
-            const newUserData = await newUser.save();
-            await userModel.updateOne({ _id: newUserData._id },
-                {
-                    subscriptionIds: [
-                        {
-                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", tronAccount.address.base58, "TRON", newUserData._id),
-                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", tronAccount.address.base58, "TRON", newUserData._id),
-                        },
-                        {
-                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "ETH", newUserData._id),
-                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "ETH", newUserData._id),
-                        },
-                        {
-                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "MATIC", newUserData._id),
-                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "MATIC", newUserData._id),
-                        },
-                        {
-                            subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "BSC", newUserData._id),
-                            subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "BSC", newUserData._id),
-                        },
-                    ],
-                }
-            );
-            return {
-                msg: "Ok !!, Create New User Has Been Successfuly !!", error: false, data: {
-                    _id: newUserData._id,
-                    email,
-                    password: generatedPassword,
-                    secretCode: generatedSecretCode,
-                    accountName,
-                }
-            };
         }
+        // Create New Document From User Schema
+        const CodeGenerator = require('node-code-generator');
+        const generator = new CodeGenerator();
+        const generatedPassword = generator.generateCodes("**##*#*#")[0];
+        const generatedSecretCode = generator.generateCodes("######")[0];
+        const accountName = `B${await userModel.countDocuments({})}`;
+        const TronWeb = require("tronweb");
+        const tronWeb = new TronWeb({
+            fullHost: process.env.TRON_NODE_BASE_API_URL,
+            headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
+        });
+        const tronAccount = await tronWeb.createAccount();
+        const { Web3 } = require("web3");
+        const web3ForEthereum = new Web3(process.env.ETHEREUM_NODE_BASE_API_URL);
+        const ethereumAccount = web3ForEthereum.eth.accounts.create();
+        const web3ForPolygon = new Web3(process.env.POLYGON_NODE_BASE_API_URL);
+        const polygonAccount = web3ForPolygon.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
+        const web3ForBSC = new Web3(process.env.BINANCE_SMART_CHAIN_NODE_BASE_API_URL);
+        const bscAccount = web3ForBSC.eth.accounts.privateKeyToAccount(ethereumAccount.privateKey);
+        const cryptoJS = require("crypto-js");
+        const encryptedPrivateKeyForEthereum = cryptoJS.AES.encrypt(ethereumAccount.privateKey, process.env.secretKey).toString();
+        const { createNewSubscriptionInTatumNotificationsService } = require("../global/functions");
+        const newUser = new userModel({
+            email,
+            password: await hash(generatedPassword, 10),
+            secretCode: await hash(generatedSecretCode, 10),
+            accountName,
+            accounts: [
+                {
+                    network: "TRON",
+                    address: tronAccount.address.base58,
+                    privateKey:  cryptoJS.AES.encrypt(tronAccount.privateKey, process.env.secretKey).toString(),
+                },
+                {
+                    network: "ETHEREUM",
+                    address: ethereumAccount.address,
+                    privateKey: encryptedPrivateKeyForEthereum,
+                },
+                {
+                    network: "POLYGON",
+                    address: polygonAccount.address,
+                    privateKey: encryptedPrivateKeyForEthereum,
+                },
+                {
+                    network: "BSC",
+                    address: bscAccount.address,
+                    privateKey: encryptedPrivateKeyForEthereum,
+                },
+            ],
+            balances: [
+                {
+                    currencyName: "TRX",
+                    network: "TRON",
+                    symbol: "TRX",
+                },
+                {
+                    currencyName: "USDT",
+                    network: "TRON",
+                    symbol: "USDT",
+                },
+                {
+                    currencyName: "ETHER",
+                    network: "ETHEREUM",
+                    symbol: "ETH",
+                },
+                {
+                    currencyName: "USDT",
+                    network: "ETHEREUM",
+                    symbol: "USDT",
+                },
+                {
+                    currencyName: "MATIC",
+                    network: "POLYGON",
+                    symbol: "MATIC",
+                },
+                {
+                    currencyName: "USDT",
+                    network: "POLYGON",
+                    symbol: "USDT",
+                },
+                {
+                    currencyName: "BNB",
+                    network: "BSC",
+                    symbol: "BNB",
+                },
+                {
+                    currencyName: "USDT",
+                    network: "BSC",
+                    symbol: "USDT",
+                },
+            ],
+            isVerified: true,
+        });
+        // Save The New User As Document In User Collection
+        const newUserData = await newUser.save();
+        await userModel.updateOne({ _id: newUserData._id },
+            {
+                subscriptionIds: [
+                    {
+                        subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", tronAccount.address.base58, "TRON", newUserData._id),
+                        subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", tronAccount.address.base58, "TRON", newUserData._id),
+                    },
+                    {
+                        subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "ETH", newUserData._id),
+                        subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "ETH", newUserData._id),
+                    },
+                    {
+                        subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "MATIC", newUserData._id),
+                        subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "MATIC", newUserData._id),
+                    },
+                    {
+                        subscriptionIdForFungibleTokensIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_FUNGIBLE_TX", ethereumAccount.address, "BSC", newUserData._id),
+                        subscriptionIdForNativeIncoming: await createNewSubscriptionInTatumNotificationsService("INCOMING_NATIVE_TX", ethereumAccount.address, "BSC", newUserData._id),
+                    },
+                ],
+            }
+        );
+        return {
+            msg: "Ok !!, Create New User Has Been Successfuly !!", error: false, data: {
+                _id: newUserData._id,
+                email,
+                password: generatedPassword,
+                secretCode: generatedSecretCode,
+                accountName,
+            }
+        };
     }
     catch (err) {
         throw Error(err);

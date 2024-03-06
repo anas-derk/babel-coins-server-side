@@ -41,9 +41,7 @@ function sendCodeToUserEmail(email) {
             resolve({
                 msg: "Sending Confirmation Code Process Has Been Successfully !!",
                 error: false,
-                data: {
-                    generatedCode,
-                }
+                data: generatedCode,
             });
         });
     });

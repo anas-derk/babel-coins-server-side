@@ -107,7 +107,25 @@ const userSchema = mongoose.Schema({
 
 const userModel = mongoose.model("user", userSchema);
 
+// Create Account Verification Codes Schema
+
+const accountVerificationCodesShema = mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+    },
+    code: {
+        type: String,
+        required: true,
+    },
+});
+
+// Create Account Verification Codes Model From Account Codes Schema
+
+const accountVerificationCodesModel = mongoose.model("account_verification_codes", accountVerificationCodesShema);
+
 module.exports = {
     mongoose,
     userModel,
+    accountVerificationCodesModel,
 }
