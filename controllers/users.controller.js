@@ -4,36 +4,37 @@ async function getUserLogin(req, res) {
     try{
         const   email = req.query.email,
                 password = req.query.password;
-        // Start Handle Email Value To Check It Before Save In DB
         const { isEmail } = require("../global/functions");
-        // Check If Email And Password Are Exist
-        if (email.length > 0 && password.length > 0) {
-            // Check If Email Valid
-            if (isEmail(email)) {
-                const { login } = require("../models/users.model");
-                const result = await login(email.toLowerCase(), password);
-                if (!result.error) {
-                    const { sign } = require("jsonwebtoken");
-                    const token = sign(result.data, process.env.secretKey, {
-                        expiresIn: "1h",
-                    });
-                    await res.json({
-                        msg: result.msg,
-                        error: result.error,
-                        data: {
-                            token,
-                        },
-                    });
-                    return;
-                }
-                await res.json(result);
-                return;
-            }
-            // Return Error Msg If Email Is Not Valid
-            await res.status(400).json(getReponseObject("Error, This Is Not Email Valid !!", true, {}));
+        if (!email) {
+            await res.status(400).json(getReponseObject("Please Send The Email !!", true, {}));
             return;
         }
-        await res.status(400).json(getReponseObject("Error, Please Enter Email And Password Or Rest Input !!", true, {}));
+        if (!password) {
+            await res.status(400).json(getReponseObject("Please Send The Password !!", true, {}));
+            return;
+        }
+        if (isEmail(email)) {
+            const { login } = require("../models/users.model");
+            const result = await login(email.toLowerCase(), password);
+            if (!result.error) {
+                const { sign } = require("jsonwebtoken");
+                const token = sign(result.data, process.env.secretKey, {
+                    expiresIn: "1h",
+                });
+                await res.json({
+                    msg: result.msg,
+                    error: result.error,
+                    data: {
+                        token,
+                    },
+                });
+                return;
+            }
+            await res.json(result);
+            return;
+        }
+        // Return Error Msg If Email Is Not Valid
+        await res.status(400).json(getReponseObject("Error, This Is Not Email Valid !!", true, {}));
     }
     catch(err) {
         await res.status(500).json(getReponseObject(err.message, true, {}));
