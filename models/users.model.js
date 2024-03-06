@@ -1,6 +1,6 @@
 // Import Mongoose And User Model Object
 
-const { mongoose, userModel } = require("../models/all.models");
+const { userModel } = require("../models/all.models");
 
 // require bcryptjs module for password encrypting
 
@@ -8,8 +8,6 @@ const { hash, compare } = require("bcryptjs");
 
 async function login(email, password) {
     try {
-        // Connect To DB
-        await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
         const user = await userModel.findOne({ email });
         if (user) {
@@ -17,7 +15,6 @@ async function login(email, password) {
             const isTruePassword = await compare(password, user.password);
             if (isTruePassword) {
                 await userModel.updateOne({ email }, { dateOfLastLogin: Date.now() });
-                await mongoose.disconnect();
                 return {
                     msg: "login successfully !!",
                     error: false,
@@ -27,7 +24,6 @@ async function login(email, password) {
                     }
                 };
             }
-            await mongoose.disconnect();
             return {
                 msg: "Sorry, Email Or Password Incorrect !!",
                 error: true,
@@ -35,7 +31,6 @@ async function login(email, password) {
             };
         }
         else {
-            await mongoose.disconnect();
             return {
                 msg: "Sorry, Email Or Password Incorrect !!",
                 error: true,
@@ -44,18 +39,14 @@ async function login(email, password) {
         }
     }
     catch (err) {
-        await mongoose.disconnect();
         throw Error(err);
     }
 }
 
 async function getAllBalances(userId) {
     try {
-        // Connect To DB
-        await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
         const user = await userModel.findById(userId);
-        await mongoose.disconnect();
         if (user) {
             return {
                 msg: `Get All Balances For User Id: ${userId} Process Has Been Successfully !!`,
@@ -71,7 +62,6 @@ async function getAllBalances(userId) {
         }
     }
     catch (err) {
-        await mongoose.disconnect();
         throw Error(err);
     }
 }
@@ -80,12 +70,9 @@ async function getAllBalances(userId) {
 
 async function createNewUser(email) {
     try {
-        // Connect To DB
-        await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
         const user = await userModel.findOne({ email });
         if (user) {
-            await mongoose.disconnect();
             return {
                 msg: "Sorry, Can't Create User Because it is Exist !!",
                 error: true,
@@ -208,8 +195,6 @@ async function createNewUser(email) {
                     ],
                 }
             );
-            // Disconnect In DB
-            await mongoose.disconnect();
             return {
                 msg: "Ok !!, Create New User Has Been Successfuly !!", error: false, data: {
                     _id: newUserData._id,
@@ -222,8 +207,6 @@ async function createNewUser(email) {
         }
     }
     catch (err) {
-        // Disconnect In DB
-        await mongoose.disconnect();
         throw Error(err);
     }
 }
@@ -231,7 +214,6 @@ async function createNewUser(email) {
 async function updateUserBalanceOnSendMoney(userId, balances, balanceItemIndex, network, currency, amount, commission){
     try{
         if (balances[balanceItemIndex].balance < amount + commission) {
-            await mongoose.disconnect();
             return {
                 msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
                 error: true,
@@ -240,7 +222,6 @@ async function updateUserBalanceOnSendMoney(userId, balances, balanceItemIndex, 
         }    
         balances[balanceItemIndex].balance = balances[balanceItemIndex].balance - (amount + commission);
         await userModel.updateOne({ _id: userId }, { balances });
-        await mongoose.disconnect();
         return {
             msg: `Updating User Balance For ${currency} In ${network} Network Has Been Successfully !!`,
             error: false,
@@ -254,8 +235,6 @@ async function updateUserBalanceOnSendMoney(userId, balances, balanceItemIndex, 
 
 async function sendMoney(userId, transactionData) {
     try {
-        // Connect To DB
-        await mongoose.connect(process.env.DB_URL);
         // Check If Email Is Exist
         const user = await userModel.findOne({ _id: userId });
         if (user) {
@@ -373,15 +352,12 @@ async function sendMoney(userId, transactionData) {
         };
     }
     catch (err) {
-        // Disconnect In DB
-        await mongoose.disconnect();
         throw Error(err);
     }
 }
 
 async function updateUserBalance(userId, network, currency, currencyIndex, newAmount, newTransactionId){
     try{
-        await mongoose.connect(process.env.DB_URL);
         const user = await userModel.findById(userId);
         if (user) {
             switch (network) {
@@ -394,7 +370,6 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
                                 balances: user.balances,
                                 lastTransactionId: newTransactionId
                             });
-                            await mongoose.disconnect();
                             return {
                                 msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
                                 error: false,
@@ -408,7 +383,6 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
                                 balances: user.balances,
                                 lastTransactionId: newTransactionId
                             });
-                            await mongoose.disconnect();
                             return {
                                 msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
                                 error: false,
@@ -419,7 +393,6 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
                 }
             }
         }
-        await mongoose.disconnect();
         return {
             msg: "Sorry, This Usr Is Not Found !!",
             error: true,
@@ -427,7 +400,6 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
         };
     }
     catch(err) {
-        await mongoose.disconnect();
         throw Error(err);
     }
 }

@@ -27,11 +27,19 @@ app.use("/assets", express.static(path.join(__dirname, "assets")));
 
 /* End direct the browser to statics files path */
 
+const mongoose = require("mongoose");
+
 /* Start Running The Server */
 
 const PORT = process.env.PORT || 5300;
 
-app.listen(PORT, () => console.log(`The Server Is Running On: http://localhost:${PORT}`));
+app.listen(PORT, () => {
+        console.log(`The Server Is Running On: http://localhost:${PORT}`)
+        mongoose.connect(process.env.DB_URL)
+        .then(() => console.log("mongoose is connection with db !!"))
+        .catch(err => console.log(err));
+    }
+);
 
 /* End Running The Server */
 
@@ -42,3 +50,7 @@ const usersRouter = require("./routes/users.router");
 app.use("/users", usersRouter);
 
 /* End Handle The Routes */
+
+module.exports = {
+    mongoose,
+}
