@@ -38,7 +38,13 @@ function sendCodeToUserEmail(email) {
     return new Promise((resolve, reject) => {
         transporterObj().sendMail(mailConfigurations, function (error, info) {
             if (error) reject(error);
-            resolve(generatedCode);
+            resolve({
+                msg: "Sending Confirmation Code Process Has Been Successfully !!",
+                error: false,
+                data: {
+                    generatedCode,
+                }
+            });
         });
     });
 }
