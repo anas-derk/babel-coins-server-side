@@ -266,7 +266,6 @@ async function postSendMoney(req, res) {
 
 async function postReceiveMoneyOnWallet(req, res) {
     try{
-        console.log(req.body);
         const receiveDetails = req.query;
         if (!receiveDetails.address) {
             await res.status(400).json(getReponseObject("Please Send Receipent Address !!", true, {}));
@@ -309,7 +308,7 @@ async function postReceiveMoneyOnWallet(req, res) {
                                 receiveDetails.userId,
                                 receiveDetails.chain,
                                 "USDT",
-                                0,
+                                1,
                                 Number(req.body.amount),
                                 req.body.txId,
                             )
