@@ -106,6 +106,27 @@ async function putUpdateUserData(req, res) {
     }
 }
 
+async function postAccountVerificationCode(req, res) {
+    try{
+        const { getReponseObject } = require("../global/functions");
+        const userEmail = req.query.email;
+        const { isEmail } = require("../global/functions");
+        if (!userEmail) {
+            await res.status(400).json(getReponseObject("Sorry, Please Send The Email !!", true, {}));
+            return;
+        }
+        if (!isEmail(userEmail)) {
+            await res.status(400).json(getReponseObject("Sorry, Please Send Valid Email !!", true, {}));
+            return;
+        }
+        const { sendCodeToUserEmail } = require("../global/functions");
+        await res.json(await sendCodeToUserEmail(userEmail));
+    }
+    catch(err) {
+        await res.status(500).json(getReponseObject(err.message, true, {}));
+    }
+}
+
 async function postSendMoney(req, res) {
     try{
         const transactionData = req.body;
@@ -363,4 +384,5 @@ module.exports = {
     putUpdateUserData,
     postSendMoney,
     postReceiveMoneyOnWallet,
+    postAccountVerificationCode,
 }
