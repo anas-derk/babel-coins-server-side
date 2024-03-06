@@ -41,7 +41,7 @@ async function getUserLogin(req, res) {
     }
 }
 
-async function getIsLogining(req, res) {
+async function getIfUserIsLogged(req, res) {
     try{
         const token = req.headers.authorization;
         if (!token) {
@@ -409,7 +409,7 @@ async function postReceiveMoneyOnWallet(req, res) {
 }
 
 module.exports = {
-    getIsLogining,
+    getIfUserIsLogged,
     getUserLogin,
     getAllBalances,
     postCreateUserAccount,
