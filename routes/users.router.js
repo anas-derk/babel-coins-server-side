@@ -8,6 +8,8 @@ usersRouter.get("/is-logged", usersController.getIfUserIsLogged);
 
 usersRouter.get("/all-balances", usersController.getAllBalances);
 
+usersRouter.get("/addresses-by-currency-name", usersController.getAddressesByCurrenecyName);
+
 usersRouter.post("/create-new-account", usersController.postCreateUserAccount);
 
 usersRouter.post("/update-user-data", usersController.putUpdateUserData);

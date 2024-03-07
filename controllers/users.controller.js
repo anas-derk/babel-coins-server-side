@@ -73,7 +73,29 @@ async function getAllBalances(req, res) {
         if (err.message === "jwt expired") {
             await res.status(400).json(getReponseObject(`Sorry, JWT Expired, Please Re-Login !!`, true, {}));
         }
-        await res.status(500).json(getReponseObject("Internal Server Error", true, {}));
+        await res.status(500).json(getReponseObject(err.message, true, {}));
+    }
+}
+
+async function getAddressesByCurrenecyName(req, res) {
+    try{
+        const token = req.headers.authorization;
+        const currencyName = req.query.currencyName;
+        if (!token) {
+            await res.status(400).json(getReponseObject("Please Send JWT For User !!", true, {}));
+            return;
+        }
+        if (!currencyName) {
+            await res.status(400).json(getReponseObject("Please Send Currency Name !!", true, {}));
+            return;
+        }
+        const { verify } = require("jsonwebtoken");
+        const result = verify(token, process.env.secretKey);
+        const { getAddressesByCurrenecyName } = require("../models/users.model");
+        await res.json(await getAddressesByCurrenecyName(result._id, currencyName));
+    }
+    catch(err) {
+        await res.status(500).json(getReponseObject(err.message, true, {}));
     }
 }
 
@@ -412,6 +434,7 @@ module.exports = {
     getIfUserIsLogged,
     getUserLogin,
     getAllBalances,
+    getAddressesByCurrenecyName,
     postCreateUserAccount,
     putUpdateUserData,
     postSendMoney,

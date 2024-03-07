@@ -150,9 +150,31 @@ const minimumDepositLimitsShema = mongoose.Schema({
 
 const minimumDepositLimitsModel = mongoose.model("minimum_deposit_limits", minimumDepositLimitsShema);
 
+// Create Supported Currencies By Networks Schema
+
+const supportedCurrenciesByNetworks = mongoose.Schema({
+    networks: {
+        type: Array,
+        required: true,
+    },
+    currencyName: {
+        type: String,
+        required: true,
+    },
+    symbol: {
+        type: String,
+        required: true,
+    },
+});
+
+// Create Supported Currencies By Networks Model From Supported Currencies By Networks Schema
+
+const supportedCurrenciesByNetworksModel = mongoose.model("supported_currencies_by_networks", supportedCurrenciesByNetworks);
+
 module.exports = {
     mongoose,
     userModel,
     accountVerificationCodesModel,
     minimumDepositLimitsModel,
+    supportedCurrenciesByNetworksModel,
 }

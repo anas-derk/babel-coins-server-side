@@ -1,6 +1,6 @@
 // Import Mongoose And User Model Object
 
-const { userModel } = require("../models/all.models");
+const { userModel, supportedCurrenciesByNetworksModel } = require("../models/all.models");
 
 // require bcryptjs module for password encrypting
 
@@ -53,15 +53,46 @@ async function getAllBalances(userId) {
                 error: false,
                 data: user.balances,
             };
-        } else {
-            return {
-                msg: `Sorry User Id: ${userId} Not Found !!`,
-                error: true,
-                data: [],
-            };
         }
+        return {
+            msg: `Sorry User Id: ${userId} Not Found !!`,
+            error: true,
+            data: [],
+        };
     }
     catch (err) {
+        throw Error(err);
+    }
+}
+
+async function getAddressesByCurrenecyName(userId, currencyName) {
+    try{
+        // Check If Email Is Exist
+        const user = await userModel.findById(userId);
+        if (user) {
+            const networksThatSupportCurrencyName = await supportedCurrenciesByNetworksModel.findOne({ currencyName });
+            let addressesByCurrencies = [];
+            user.accounts.forEach((account) => {
+                if(networksThatSupportCurrencyName.networks.includes(account.network)) {
+                    addressesByCurrencies.push({
+                        network: account.network,
+                        address: account.address,
+                    });
+                }
+            });
+            return {
+                msg: `Get All Addresses For User Id: ${userId} By Currency Name: ${currencyName} Process Has Been Successfully !!`,
+                error: false,
+                data: addressesByCurrencies,
+            };
+        }
+        return {
+            msg: `Sorry User Id: ${userId} Not Found !!`,
+            error: true,
+            data: [],
+        };
+    }
+    catch(err) {
         throw Error(err);
     }
 }
@@ -392,6 +423,7 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
 module.exports = {
     login,
     getAllBalances,
+    getAddressesByCurrenecyName,
     createNewUser,
     sendMoney,
     updateUserBalance,
