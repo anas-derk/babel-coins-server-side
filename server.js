@@ -15,7 +15,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-require('dotenv').config();
+require("dotenv").config();
 
 /* End Config The Server */
 
@@ -50,6 +50,20 @@ const usersRouter = require("./routes/users.router");
 app.use("/users", usersRouter);
 
 /* End Handle The Routes */
+
+/* Start Handling Events */
+
+mongoose.connection.on("connected", () => console.log("connected"));
+mongoose.connection.on("disconnected", () => console.log("disconnected"));
+mongoose.connection.on("reconnected", () => console.log("reconnected"));
+mongoose.connection.on("disconnecting", () => console.log("disconnecting"));
+mongoose.connection.on("close", () => console.log("close"));
+
+process.on("SIGINT", () => {
+    mongoose.connection.close();
+});
+
+/* End Handling Events */
 
 module.exports = {
     mongoose,

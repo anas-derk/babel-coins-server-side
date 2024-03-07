@@ -124,8 +124,35 @@ const accountVerificationCodesShema = mongoose.Schema({
 
 const accountVerificationCodesModel = mongoose.model("account_verification_codes", accountVerificationCodesShema);
 
+// Create Minimum Deposit Limits Schema
+
+const minimumDepositLimitsShema = mongoose.Schema({
+    depositType: {
+        type: String,
+        required: true,
+    },
+    network: String,
+    currencyName: {
+        type: String,
+        required: true,
+    },
+    symbol: {
+        type: String,
+        required: true,
+    },
+    amount: {
+        type: Number,
+        required: true,
+    },
+});
+
+// Create Minimum Deposit Limits From Minimum Deposit Limits Schema
+
+const minimumDepositLimitsModel = mongoose.model("minimum_deposit_limits", minimumDepositLimitsShema);
+
 module.exports = {
     mongoose,
     userModel,
     accountVerificationCodesModel,
+    minimumDepositLimitsModel,
 }
