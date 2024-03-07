@@ -136,7 +136,7 @@ async function createNewUser(email) {
                 },
                 {
                     currencyName: "USDT",
-                    network: "TRON",
+                    network: "TRON,ETHEREUM,POLYGON,BSC",
                     symbol: "USDT",
                 },
                 {
@@ -145,29 +145,14 @@ async function createNewUser(email) {
                     symbol: "ETH",
                 },
                 {
-                    currencyName: "USDT",
-                    network: "ETHEREUM",
-                    symbol: "USDT",
-                },
-                {
                     currencyName: "MATIC",
                     network: "POLYGON",
                     symbol: "MATIC",
                 },
                 {
-                    currencyName: "USDT",
-                    network: "POLYGON",
-                    symbol: "USDT",
-                },
-                {
                     currencyName: "BNB",
                     network: "BSC",
                     symbol: "BNB",
-                },
-                {
-                    currencyName: "USDT",
-                    network: "BSC",
-                    symbol: "USDT",
                 },
             ],
             isVerified: true,
