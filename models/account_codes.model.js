@@ -1,4 +1,4 @@
-const { accountVerificationCodesModel } = require("../models/all.models")
+const { accountVerificationCodesModel } = require("../models/all.models");
 
 async function addNewAccountVerificationCode(email, code) {
     try{
