@@ -45,9 +45,12 @@ app.listen(PORT, () => {
 
 /* Start Handle The Routes */
 
-const usersRouter = require("./routes/users.router");
+const   usersRouter = require("./routes/users.router"),
+        currenciesRouter = require("./routes/currencies.router");
 
 app.use("/users", usersRouter);
+
+app.use("/currencies", currenciesRouter);
 
 /* End Handle The Routes */
 
