@@ -181,7 +181,7 @@ function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes)
     for (let fieldnameAndValueAndDataType of fieldNamesAndValuesAndDataTypes) {
         if (fieldnameAndValueAndDataType.isRequiredValue) {
             if (!fieldnameAndValueAndDataType.fieldValue) 
-                return getResponseObject(
+                return getReponseObject(
                     `Invalid Request, Please Send ${fieldnameAndValueAndDataType.fieldName} Value !!`,
                     true,
                     {}
@@ -189,14 +189,14 @@ function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes)
         }
         if (fieldnameAndValueAndDataType.fieldValue) {
             if (typeof fieldnameAndValueAndDataType.fieldValue !== fieldnameAndValueAndDataType.dataType)
-                return getResponseObject(
+                return getReponseObject(
                     `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${fieldnameAndValueAndDataType.dataType} ) !!`,
                     true,
                     {}
                 );
         }
     }
-    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+    return getReponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
 }
 
 module.exports = {

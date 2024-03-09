@@ -38,6 +38,7 @@ async function getUserLogin(req, res) {
         await res.status(400).json(getReponseObject("Error, This Is Not Email Valid !!", true, {}));
     }
     catch(err) {
+        console.log(err);
         await res.status(500).json(getReponseObject(err.message, true, {}));
     }
 }
@@ -123,6 +124,7 @@ async function postCreateUserAccount(req, res) {
         await res.status(400).json(getReponseObject("Error, This Is Not Email Valid !!", true, {}));
     }
     catch(err) {
+        console.log(err);
         await res.status(500).json(getReponseObject(err.message, true, {}));
     }
 }
