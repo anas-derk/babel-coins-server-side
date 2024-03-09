@@ -312,7 +312,7 @@ async function postReceiveMoneyOnWallet(req, res) {
         const checkResult = checkIsExistValueForFieldsAndDataTypes([
             { fieldName: "Receipent Address", fieldValue: receiveDetails.address, dataType: "string", isRequiredValue: true },
             { fieldName: "Network Name", fieldValue: receiveDetails.chain, dataType: "string", isRequiredValue: true },
-            { fieldName: "Receipent Address", fieldValue: receiveDetails.userId, dataType: "string", isRequiredValue: true },
+            { fieldName: "User Id", fieldValue: receiveDetails.userId, dataType: "string", isRequiredValue: true },
         ]);
         if (checkResult.error) {
             await res.status(400).json(checkResult);
