@@ -26,7 +26,7 @@ const supportedCurrenciesByNetworksModel = mongoose.model("supported_currencies_
 const supported_currencies_by_networks_list = [
     {
         currencyName: "USDT",
-        symbol: "USD",
+        symbol: "USDT",
         networks: ["TRON", "ETHEREUM", "POLYGON", "BSC"],
     },
     {
