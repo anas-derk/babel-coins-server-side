@@ -46,7 +46,7 @@ const supported_currencies_by_networks_list = [
     },
     {
         currencyName: "BNB",
-        symbol: "ETH",
+        symbol: "BNB",
         networks: ["ETHEREUM", "BSC"],
     },
 ];

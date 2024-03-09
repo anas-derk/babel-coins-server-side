@@ -1,4 +1,4 @@
-const { getReponseObject, checkIsExistValueForFieldsAndDataTypes } = require("../global/functions");
+const { getResponseObject, checkIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
 
 async function getUserLogin(req, res) {
@@ -35,11 +35,11 @@ async function getUserLogin(req, res) {
             return;
         }
         // Return Error Msg If Email Is Not Valid
-        await res.status(400).json(getReponseObject("Error, This Is Not Email Valid !!", true, {}));
+        await res.status(400).json(getResponseObject("Error, This Is Not Email Valid !!", true, {}));
     }
     catch(err) {
         console.log(err);
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -49,7 +49,7 @@ async function getUserInfo(req, res) {
         await res.json(await getUserInfo(req.data._id));
     }
     catch(err) {
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -59,7 +59,7 @@ async function getAllBalances(req, res) {
         await res.json(await getAllBalances(req.data._id));
     }
     catch(err) {
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -74,10 +74,10 @@ async function getAddressesByCurrenecyName(req, res) {
             return;
         }
         const { getAddressesByCurrenecyName } = require("../models/users.model");
-        await res.json(await getAddressesByCurrenecyName(result._id, currencyName));
+        await res.json(await getAddressesByCurrenecyName(req.data._id, currencyName));
     }
     catch(err) {
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -94,7 +94,7 @@ async function postCreateUserAccount(req, res) {
             return;
         }
         if (code.length < 4) {
-            await res.status(400).json(getReponseObject("Please Send The Code Character Count !!", true, {}));
+            await res.status(400).json(getResponseObject("Please Send The Code Character Count !!", true, {}));
             return;
         }
         const { isEmail } = require("../global/functions");
@@ -121,11 +121,11 @@ async function postCreateUserAccount(req, res) {
             await res.json(result);
             return;
         }
-        await res.status(400).json(getReponseObject("Error, This Is Not Email Valid !!", true, {}));
+        await res.status(400).json(getResponseObject("Error, This Is Not Email Valid !!", true, {}));
     }
     catch(err) {
         console.log(err);
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -150,7 +150,7 @@ async function postAccountVerificationCode(req, res) {
         }
         const { isEmail } = require("../global/functions");
         if (!isEmail(email)) {
-            await res.status(400).json(getReponseObject("Sorry, Please Send Valid Email !!", true, {}));
+            await res.status(400).json(getResponseObject("Sorry, Please Send Valid Email !!", true, {}));
             return;
         }
         const { sendCodeToUserEmail } = require("../global/functions");
@@ -161,7 +161,7 @@ async function postAccountVerificationCode(req, res) {
         }
     }
     catch(err) {
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -182,13 +182,13 @@ async function postSendMoney(req, res) {
             case "TRON": {
                 const TronWeb = require("tronweb");
                 if (!TronWeb.isAddress(transactionData.receipentAddress)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
                 switch (transactionData.currency) {
                     case "TRX": {
                         if (transactionData.amount < 30) {
-                            await res.status(400).json(getReponseObject("Please Send Amount Greater Than Or Equual 30 TRX !!", true, {}));
+                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 30 TRX !!", true, {}));
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -210,7 +210,7 @@ async function postSendMoney(req, res) {
                     }
                     case "USDT": {
                         if (transactionData.amount < 10) {
-                            await res.status(400).json(getReponseObject("Please Send Amount Greater Than Or Equual 10 USDT !!", true, {}));
+                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 10 USDT !!", true, {}));
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -236,13 +236,13 @@ async function postSendMoney(req, res) {
             case "ETHEREUM": {
                 const web3 = require("web3");
                 if(!web3.utils.isAddress(transactionData.receipentAddress)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
                 switch (transactionData.currency) {
                     case "ETHER": {
                         if (transactionData.amount < 0.02) {
-                            await res.status(400).json(getReponseObject("Please Send Amount Greater Than Or Equual 0.02 ETHER !!", true, {}));
+                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 0.02 ETHER !!", true, {}));
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -264,7 +264,7 @@ async function postSendMoney(req, res) {
                     }
                     case "USDT": {
                         if (transactionData.amount < 5) {
-                            await res.status(400).json(getReponseObject("Please Send Amount Greater Than Or Equual 5 USDT !!", true, {}));
+                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 5 USDT !!", true, {}));
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
@@ -285,24 +285,24 @@ async function postSendMoney(req, res) {
                         break;
                     }
                     default: {
-                        await res.status(400).json(getReponseObject(`Please Send Valid Currency Name For ${transactionData.network} Network !!`, true, {}));
+                        await res.status(400).json(getResponseObject(`Please Send Valid Currency Name For ${transactionData.network} Network !!`, true, {}));
                         return;
                     }
                 }
                 break;
             }
             default: {
-                await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
+                await res.status(400).json(getResponseObject("Please Send Valid Network Name !!", true, {}));
                 return;
             }
         }
     }
     catch(err) {
         if (!err.message.includes("insufficient funds")) {
-            await res.status(500).json(getReponseObject(err.message, true, {}));
+            await res.status(500).json(getResponseObject(err.message, true, {}));
             return;
         }
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
@@ -322,7 +322,7 @@ async function postReceiveMoneyOnWallet(req, res) {
             case "TRON": {
                 const TronWeb = require("tronweb");
                 if (!TronWeb.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
                 if (req.body.subscriptionType === "INCOMING_NATIVE_TX") {
@@ -354,16 +354,16 @@ async function postReceiveMoneyOnWallet(req, res) {
                         );
                         return;
                     }
-                    await res.status(200).json(getReponseObject("Please Send Valid Asset Name !!", true, {}));
+                    await res.status(200).json(getResponseObject("Please Send Valid Asset Name !!", true, {}));
                     return;
                 }
-                await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
+                await res.status(400).json(getResponseObject("Please Send Valid Network Name !!", true, {}));
                 break;
             }
             case "ETH": {
                 const web3 = require("web3");
                 if(!web3.utils.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
                 break;
@@ -371,7 +371,7 @@ async function postReceiveMoneyOnWallet(req, res) {
             case "MATIC": {
                 const web3 = require("web3");
                 if(!web3.utils.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
                 break;
@@ -379,19 +379,19 @@ async function postReceiveMoneyOnWallet(req, res) {
             case "BSC": {
                 const web3 = require("web3");
                 if(!web3.utils.isAddress(receiveDetails.address)) {
-                    await res.status(400).json(getReponseObject("Please Send Valid Receipent Address !!", true, {}));
+                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
                 break;
             }
             default: {
-                await res.status(400).json(getReponseObject("Please Send Valid Network Name !!", true, {}));
+                await res.status(400).json(getResponseObject("Please Send Valid Network Name !!", true, {}));
             }
         }
     }
     catch(err) {
         console.log(err);
-        await res.status(500).json(getReponseObject(err.message, true, {}));
+        await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
 
