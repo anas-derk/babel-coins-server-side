@@ -205,6 +205,6 @@ module.exports = {
     getBalanceOnBlockChain,
     sendMoneyOnBlockChain,
     createNewSubscriptionInTatumNotificationsService,
-    getReponseObject,
+    getResponseObject,
     checkIsExistValueForFieldsAndDataTypes,
 }
