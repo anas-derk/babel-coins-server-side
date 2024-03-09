@@ -43,6 +43,38 @@ async function login(email, password) {
     }
 }
 
+async function getUserInfo(userId) {
+    try{
+        // Check If User Is Exist
+        const user = await userModel.findById(userId);
+        if (user) {
+            return {
+                msg: "Get User Info Process Has Been Successfully !!",
+                error: false,
+                data: {
+                    _id: user._id,
+                    email: user.email,
+                    accountName: user.accountName,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    country: user.country,
+                    isVerified: user.isVerified,
+                    createdDate: user.createdDate,
+                    dateOfLastLogin: user.dateOfLastLogin,
+                },
+            };
+        }
+        return {
+            msg: "Sorry, The User Is Not Exist !!, Please Enter Another User Id ..",
+            error: true,
+            data: {},
+        };
+    }
+    catch(err) {
+        throw Error(err);
+    }
+}
+
 async function getAllBalances(userId) {
     try {
         // Check If Email Is Exist
@@ -422,6 +454,7 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
 
 module.exports = {
     login,
+    getUserInfo,
     getAllBalances,
     getAddressesByCurrenecyName,
     createNewUser,

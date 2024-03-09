@@ -1,18 +1,19 @@
-const { getReponseObject } = require("../global/functions");
+const { getReponseObject, checkIsExistValueForFieldsAndDataTypes } = require("../global/functions");
+
 
 async function getUserLogin(req, res) {
     try{
         const   email = req.query.email,
                 password = req.query.password;
+        const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Password", fieldValue: password, dataType: "string", isRequiredValue: true },
+        ]);
+        if (checkResult.error) {
+            await res.status(400).json(checkResult);
+            return;
+        }
         const { isEmail } = require("../global/functions");
-        if (!email) {
-            await res.status(400).json(getReponseObject("Please Send The Email !!", true, {}));
-            return;
-        }
-        if (!password) {
-            await res.status(400).json(getReponseObject("Please Send The Password !!", true, {}));
-            return;
-        }
         if (isEmail(email)) {
             const { login } = require("../models/users.model");
             const result = await login(email.toLowerCase(), password);
@@ -41,16 +42,10 @@ async function getUserLogin(req, res) {
     }
 }
 
-async function getIfUserIsLogged(req, res) {
+async function getUserInfo(req, res) {
     try{
-        const token = req.headers.authorization;
-        if (!token) {
-            await res.status(400).json(getReponseObject("Please Send JWT For User !!", true, {}));
-            return;
-        }
-        const { verify } = require("jsonwebtoken");
-        verify(token, process.env.secretKey);
-        await res.json(getReponseObject("User Is Logged !!", false, {}));
+        const { getUserInfo } = require("../models/users.model");
+        await res.json(await getUserInfo(req.data._id));
     }
     catch(err) {
         await res.status(500).json(getReponseObject(err.message, true, {}));
@@ -59,38 +54,24 @@ async function getIfUserIsLogged(req, res) {
 
 async function getAllBalances(req, res) {
     try{
-        const token = req.headers.authorization;
-        if (!token) {
-            await res.status(400).json(getReponseObject("Please Send JWT For User !!", true, {}));
-            return;
-        }
-        const { verify } = require("jsonwebtoken");
-        const result = verify(token, process.env.secretKey);
         const { getAllBalances } = require("../models/users.model");
-        await res.json(await getAllBalances(result._id));
+        await res.json(await getAllBalances(req.data._id));
     }
     catch(err) {
-        if (err.message === "jwt expired") {
-            await res.status(400).json(getReponseObject(`Sorry, JWT Expired, Please Re-Login !!`, true, {}));
-        }
         await res.status(500).json(getReponseObject(err.message, true, {}));
     }
 }
 
 async function getAddressesByCurrenecyName(req, res) {
     try{
-        const token = req.headers.authorization;
         const currencyName = req.query.currencyName;
-        if (!token) {
-            await res.status(400).json(getReponseObject("Please Send JWT For User !!", true, {}));
+        const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Currency Name", fieldValue: currencyName, dataType: "string", isRequiredValue: true },
+        ]);
+        if (checkResult.error) {
+            await res.status(400).json(checkResult);
             return;
         }
-        if (!currencyName) {
-            await res.status(400).json(getReponseObject("Please Send Currency Name !!", true, {}));
-            return;
-        }
-        const { verify } = require("jsonwebtoken");
-        const result = verify(token, process.env.secretKey);
         const { getAddressesByCurrenecyName } = require("../models/users.model");
         await res.json(await getAddressesByCurrenecyName(result._id, currencyName));
     }
@@ -103,12 +84,12 @@ async function postCreateUserAccount(req, res) {
     try{
         const email = req.body.email;
         const code = req.query.code;
-        if (!email) {
-            await res.status(400).json(getReponseObject("Please Send The Email !!", true, {}));
-            return;
-        }
-        if (!code) {
-            await res.status(400).json(getReponseObject("Please Send The Code !!", true, {}));
+        const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+            { fieldName: "Code", fieldValue: code, dataType: "string", isRequiredValue: true },
+        ]);
+        if (checkResult.error) {
+            await res.status(400).json(checkResult);
             return;
         }
         if (code.length < 4) {
@@ -157,22 +138,24 @@ async function putUpdateUserData(req, res) {
 
 async function postAccountVerificationCode(req, res) {
     try{
-        const { getReponseObject } = require("../global/functions");
-        const userEmail = req.query.email;
-        const { isEmail } = require("../global/functions");
-        if (!userEmail) {
-            await res.status(400).json(getReponseObject("Sorry, Please Send The Email !!", true, {}));
+        const email = req.query.email;
+        const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Email", fieldValue: email, dataType: "string", isRequiredValue: true },
+        ]);
+        if (checkResult.error) {
+            await res.status(400).json(checkResult);
             return;
         }
-        if (!isEmail(userEmail)) {
+        const { isEmail } = require("../global/functions");
+        if (!isEmail(email)) {
             await res.status(400).json(getReponseObject("Sorry, Please Send Valid Email !!", true, {}));
             return;
         }
         const { sendCodeToUserEmail } = require("../global/functions");
-        const result = await sendCodeToUserEmail(userEmail);
+        const result = await sendCodeToUserEmail(email);
         if (!result.error) {
             const { addNewAccountVerificationCode } = require("../models/account_codes.model"); 
-            await res.json(await addNewAccountVerificationCode(userEmail, result.data));
+            await res.json(await addNewAccountVerificationCode(email, result.data));
         }
     }
     catch(err) {
@@ -183,31 +166,14 @@ async function postAccountVerificationCode(req, res) {
 async function postSendMoney(req, res) {
     try{
         const transactionData = req.body;
-        const token = req.headers.authorization;
-        if (!token) {
-            await res.status(403).json({
-                msg: "Please Send JWT For User !!",
-                error: true,
-                data: {},
-            });
-            return;
-        }
-        const { verify } = require("jsonwebtoken");
-        const result = verify(token, process.env.secretKey);
-        if (!transactionData.network) {
-            await res.status(400).json(getReponseObject("Please Send Network Name !!", true, {}));
-            return;
-        }
-        if (!transactionData.currency) {
-            await res.status(400).json(getReponseObject("Please Send Currency Name !!", true, {}));
-            return;
-        }
-        if (!transactionData.receipentAddress) {
-            await res.status(400).json(getReponseObject("Please Send Receipent Address !!", true, {}));
-            return;
-        }
-        if (!transactionData.amount) {
-            await res.status(400).json(getReponseObject("Please Send Amount !!", true, {}));
+        const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Network Name", fieldValue: transactionData.network, dataType: "string", isRequiredValue: true },
+            { fieldName: "Currency Name", fieldValue: transactionData.currency, dataType: "string", isRequiredValue: true },
+            { fieldName: "Receipent Address", fieldValue: transactionData.receipentAddress, dataType: "string", isRequiredValue: true },
+            { fieldName: "Amount", fieldValue: transactionData.amount, dataType: "string", isRequiredValue: true },
+        ]);
+        if (checkResult.error) {
+            await res.status(400).json(checkResult);
             return;
         }
         switch(transactionData.network) {
@@ -224,7 +190,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(result._id, transactionData);
+                        const result1 = await sendMoney(req.data._id, transactionData);
                         await res.json(result1);
                         if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -246,7 +212,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(result._id, transactionData);
+                        const result1 = await sendMoney(req.data._id, transactionData);
                         await res.json(result1);
                         if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -278,7 +244,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(result._id, transactionData);
+                        const result1 = await sendMoney(req.data._id, transactionData);
                         await res.json(result1);
                         if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -300,7 +266,7 @@ async function postSendMoney(req, res) {
                             return;
                         }
                         const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(result._id, transactionData);
+                        const result1 = await sendMoney(req.data._id, transactionData);
                         await res.json(result1);
                         if (!result1.error) {
                             const { sendMoneyOnBlockChain } = require("../global/functions");
@@ -341,16 +307,13 @@ async function postSendMoney(req, res) {
 async function postReceiveMoneyOnWallet(req, res) {
     try{
         const receiveDetails = req.query;
-        if (!receiveDetails.address) {
-            await res.status(400).json(getReponseObject("Please Send Receipent Address !!", true, {}));
-            return;
-        }
-        if (!receiveDetails.chain) {
-            await res.status(400).json(getReponseObject("Please Send Currency Name !!", true, {}));
-            return;
-        }
-        if (!receiveDetails.userId) {
-            await res.status(400).json(getReponseObject("Please Send User Id !!", true, {}));
+        const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Receipent Address", fieldValue: receiveDetails.address, dataType: "string", isRequiredValue: true },
+            { fieldName: "Network Name", fieldValue: receiveDetails.chain, dataType: "string", isRequiredValue: true },
+            { fieldName: "Receipent Address", fieldValue: receiveDetails.userId, dataType: "string", isRequiredValue: true },
+        ]);
+        if (checkResult.error) {
+            await res.status(400).json(checkResult);
             return;
         }
         switch(receiveDetails.chain) {
@@ -431,7 +394,7 @@ async function postReceiveMoneyOnWallet(req, res) {
 }
 
 module.exports = {
-    getIfUserIsLogged,
+    getUserInfo,
     getUserLogin,
     getAllBalances,
     getAddressesByCurrenecyName,

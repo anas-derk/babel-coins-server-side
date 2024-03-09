@@ -1,9 +1,13 @@
+const { join } = require("path");
+const { readFileSync } = require("fs");
+const { compile } = require("ejs");
+
 function isEmail(email) {
     return email.match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
 }
 
 function transporterObj() {
-    const nodemailer = require('nodemailer');
+    const nodemailer = require("nodemailer");
     // إنشاء ناقل بيانات لسيرفر SMTP مع إعداده 
     const transporter = nodemailer.createTransport({
         host: "smtp.hostinger.com",
@@ -18,12 +22,8 @@ function transporterObj() {
     return transporter;
 }
 
-const { join } = require("path");
-const { readFileSync } = require("fs");
-const { compile } = require("ejs");
-
 function sendCodeToUserEmail(email) {
-    const CodeGenerator = require('node-code-generator');
+    const CodeGenerator = require("node-code-generator");
     const generator = new CodeGenerator();
     const generatedCode = generator.generateCodes("####")[0];
     const templateContent =  readFileSync(join(__dirname, "..", "assets", "email_template.ejs"), "utf-8");
@@ -177,6 +177,28 @@ function getReponseObject(msg, isError, data) {
     }
 }
 
+function checkIsExistValueForFieldsAndDataTypes(fieldNamesAndValuesAndDataTypes) {
+    for (let fieldnameAndValueAndDataType of fieldNamesAndValuesAndDataTypes) {
+        if (fieldnameAndValueAndDataType.isRequiredValue) {
+            if (!fieldnameAndValueAndDataType.fieldValue) 
+                return getResponseObject(
+                    `Invalid Request, Please Send ${fieldnameAndValueAndDataType.fieldName} Value !!`,
+                    true,
+                    {}
+                );
+        }
+        if (fieldnameAndValueAndDataType.fieldValue) {
+            if (typeof fieldnameAndValueAndDataType.fieldValue !== fieldnameAndValueAndDataType.dataType)
+                return getResponseObject(
+                    `Invalid Request, Please Fix Type Of ${fieldnameAndValueAndDataType.fieldName} ( Required: ${fieldnameAndValueAndDataType.dataType} ) !!`,
+                    true,
+                    {}
+                );
+        }
+    }
+    return getResponseObject("Success In Check Is Exist Value For Fields And Data Types !!", false, {});
+}
+
 module.exports = {
     isEmail,
     sendCodeToUserEmail,
@@ -184,4 +206,5 @@ module.exports = {
     sendMoneyOnBlockChain,
     createNewSubscriptionInTatumNotificationsService,
     getReponseObject,
+    checkIsExistValueForFieldsAndDataTypes,
 }
