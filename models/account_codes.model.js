@@ -4,16 +4,27 @@ async function addNewAccountVerificationCode(email, code) {
     try{
         const accountVerificationCode = await accountVerificationCodesModel.findOne({ email });
         if (accountVerificationCode) {
-            await accountVerificationCodesModel.updateOne({ email }, { code });
+            const creatingDate = new Date(Date.now());
+            await accountVerificationCodesModel.updateOne({ email },
+                {
+                    code,
+                    requestTimeCount: accountVerificationCode.requestTimeCount + 1,
+                    createdDate: creatingDate,
+                    expirationDate: new Date(creatingDate.getTime() + 24 * 60 * 60 * 1000),
+                }
+            );
             return {
                 msg: "Code Sending Again Process Successfully !!",
                 error: false,
                 data: {},
             }
         }
+        const creatingDate = new Date(Date.now());
         const newAccountCode = new accountVerificationCodesModel({
             email,
             code,
+            createdDate: creatingDate,
+            expirationDate: new Date(creatingDate.getTime() + 24 * 60 * 60 * 1000),
         });
         await newAccountCode.save();
         return {
@@ -55,7 +66,29 @@ async function isAccountVerificationCodeValid(email, code) {
     }
 }
 
+async function getEmailCode(email) {
+    try{
+        const accountVerificationCode = await accountVerificationCodesModel.findOne({ email });
+        if (accountVerificationCode) {
+            return {
+                msg: "Get Email Code Process Has Been Successfully !!",
+                error: false,
+                data: accountVerificationCode,
+            }
+        }
+        return {
+            msg: "Sorry, There Is No Code For This Email !!",
+            error: true,
+            data: {},
+        }
+    }
+    catch(err) {
+        throw Error(err);
+    }
+}
+
 module.exports = {
     addNewAccountVerificationCode,
     isAccountVerificationCodeValid,
+    getEmailCode,
 }

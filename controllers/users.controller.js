@@ -153,8 +153,13 @@ async function postAccountVerificationCode(req, res) {
             await res.status(400).json(getResponseObject("Sorry, Please Send Valid Email !!", true, {}));
             return;
         }
+        // const { getEmailCode } = require("../models/account_codes.model");
+        // let result = await getEmailCode(email);
+        // if (!result.error) {
+            
+        // }
         const { sendCodeToUserEmail } = require("../global/functions");
-        const result = await sendCodeToUserEmail(email);
+        let result = await sendCodeToUserEmail(email);
         if (!result.error) {
             const { addNewAccountVerificationCode } = require("../models/account_codes.model"); 
             await res.json(await addNewAccountVerificationCode(email, result.data));

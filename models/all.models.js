@@ -118,6 +118,12 @@ const accountVerificationCodesShema = mongoose.Schema({
         type: String,
         required: true,
     },
+    createdDate: Date,
+    expirationDate: Date,
+    requestTimeCount: {
+        type: Number,
+        default: 1,
+    }
 });
 
 // Create Account Verification Codes Model From Account Codes Schema
