@@ -119,11 +119,22 @@ const accountVerificationCodesShema = mongoose.Schema({
         required: true,
     },
     createdDate: Date,
-    expirationDate: Date,
+    expirationDate: {
+        type: Date,
+        required: true,
+    },
     requestTimeCount: {
         type: Number,
         default: 1,
-    }
+    },
+    isBlockingFromReceiveTheCode: {
+        type: Boolean,
+        default: false,
+    },
+    receiveBlockingExpirationDate: {
+        type: Date,
+        default: Date.now(),
+    },
 });
 
 // Create Account Verification Codes Model From Account Codes Schema

@@ -66,19 +66,23 @@ async function isAccountVerificationCodeValid(email, code) {
     }
 }
 
-async function getEmailCode(email) {
+async function isBlockingFromReceiveTheCodeAndReceiveBlockingExpirationDate(email) {
     try{
         const accountVerificationCode = await accountVerificationCodesModel.findOne({ email });
         if (accountVerificationCode) {
-            return {
-                msg: "Get Email Code Process Has Been Successfully !!",
-                error: false,
-                data: accountVerificationCode,
+            if (accountVerificationCode.isBlockingFromReceiveTheCode) {
+                return {
+                    msg: "Sorry, This Email Has Been Blocked From Receiving Code Messages For 24 Hours Due To Exceeding The Maximum Number Of Resend Attempts !!",
+                    error: true,
+                    data: {
+                        receiveBlockingExpirationDate: accountVerificationCode.receiveBlockingExpirationDate,
+                    },
+                }
             }
         }
         return {
             msg: "Sorry, There Is No Code For This Email !!",
-            error: true,
+            error: false,
             data: {},
         }
     }
@@ -90,5 +94,5 @@ async function getEmailCode(email) {
 module.exports = {
     addNewAccountVerificationCode,
     isAccountVerificationCodeValid,
-    getEmailCode,
+    isBlockingFromReceiveTheCodeAndReceiveBlockingExpirationDate,
 }
