@@ -211,6 +211,40 @@ const transferFeesShema = mongoose.Schema({
 
 const transferFeesModel = mongoose.model("transfer_fees", transferFeesShema);
 
+// Create Transfer Limits Schema
+
+const transferLimitsShema = mongoose.Schema({
+    transferType: {
+        type: String,
+        required: true,
+    },
+    network: String,
+    currencyName: {
+        type: String,
+        required: true,
+    },
+    symbol: {
+        type: String,
+        required: true,
+    },
+    minInOneTime: {
+        type: Number,
+        required: true,
+    },
+    maxInOneTime: {
+        type: Number,
+        required: true,
+    },
+    maxIn24Hours: {
+        type: Number,
+        required: true,
+    },
+});
+
+// Create Transfer Limits Model From Transfer Limits Schema
+
+const transferLimitsModel = mongoose.model("transfer_limits", transferLimitsShema);
+
 module.exports = {
     mongoose,
     userModel,
@@ -218,4 +252,5 @@ module.exports = {
     minimumDepositLimitsModel,
     supportedCurrenciesByNetworksModel,
     transferFeesModel,
+    transferLimitsModel,
 }

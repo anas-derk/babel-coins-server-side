@@ -2,10 +2,10 @@ const { transferFeesModel } = require("../models/all.models");
 
 async function getFeeByCurrencyAndNetworkName(currencyName, network) {
     try{
-        const transactionFeeDetails = await transferFeesModel.findOne({ currencyName, network });
-        if (transactionFeeDetails) {
+        const transferFeeDetails = await transferFeesModel.findOne({ currencyName, network });
+        if (transferFeeDetails) {
             return {
-                msg: "Get Transaction Fee By Currency And Network Name Process Has Been Successfully !!",
+                msg: "Get Transfer Fee By Currency And Network Name Process Has Been Successfully !!",
                 error: false,
                 data: await transferFeesModel.findOne({ currencyName, network })
             }

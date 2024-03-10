@@ -34,7 +34,7 @@ const transferLimitsShema = mongoose.Schema({
 
 // Create Transfer Limits Model From Transfer Limits Schema
 
-const transferLimitsShemaModel = mongoose.model("transfer_limits", transferLimitsShema);
+const transferLimitsModel = mongoose.model("transfer_limits", transferLimitsShema);
 
 const transfer_limits_list = [
     {
@@ -130,7 +130,7 @@ const transfer_limits_list = [
 async function create_transfer_limits_list() {
     try {
         await mongoose.connect(process.env.DB_URL);
-        await transferLimitsShemaModel.insertMany(transfer_limits_list);
+        await transferLimitsModel.insertMany(transfer_limits_list);
         return "Creating Transfer Limits List Process Has Been Successfully !!";
     } catch(err) {
         await mongoose.disconnect();
