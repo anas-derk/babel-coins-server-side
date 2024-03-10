@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 // Create Transfer Fees Schema
 
 const transferFeesShema = mongoose.Schema({
-    depositType: {
+    transferType: {
         type: String,
         required: true,
     },
@@ -30,68 +30,68 @@ const transferFeesModel = mongoose.model("transfer_fees", transferFeesShema);
 
 const transfer_fees_list = [
     {
-        depositType: "fiat",
+        transferType: "fiat",
         currencyName: "United States dollar",
         symbol: "USD",
         fee: 10,
     },
     {
-        depositType: "fiat",
+        transferType: "fiat",
         currencyName: "Euro",
         symbol: "EUR",
         fee: 10,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "TRON",
         currencyName: "TRX",
         symbol: "TRX",
         fee: 0.8,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "TRON",
         currencyName: "USDT",
         symbol: "USDT",
         fee: 10,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "ETHEREUM",
         currencyName: "ETHER",
         symbol: "ETH",
         fee: 0.0029,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "ETHEREUM",
         currencyName: "USDT",
         symbol: "USDT",
         fee: 10,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "POLYGON",
         currencyName: "MATIC",
         symbol: "MATIC",
         fee: 0.1,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "POLYGON",
         currencyName: "USDT",
         symbol: "USDT",
         fee: 10,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "BSC",
         currencyName: "BNB",
         symbol: "BNB",
         fee: 0.0005,
     },
     {
-        depositType: "crypto",
+        transferType: "crypto",
         network: "BSC",
         currencyName: "USDT",
         symbol: "USDT",

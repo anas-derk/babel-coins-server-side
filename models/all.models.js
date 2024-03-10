@@ -185,10 +185,37 @@ const supportedCurrenciesByNetworks = mongoose.Schema({
 
 const supportedCurrenciesByNetworksModel = mongoose.model("supported_currencies_by_networks", supportedCurrenciesByNetworks);
 
+// Create Transfer Fees Schema
+
+const transferFeesShema = mongoose.Schema({
+    transferType: {
+        type: String,
+        required: true,
+    },
+    network: String,
+    currencyName: {
+        type: String,
+        required: true,
+    },
+    symbol: {
+        type: String,
+        required: true,
+    },
+    fee: {
+        type: Number,
+        required: true,
+    },
+});
+
+// Create Fees Model From Fees Schema
+
+const transferFeesModel = mongoose.model("transfer_fees", transferFeesShema);
+
 module.exports = {
     mongoose,
     userModel,
     accountVerificationCodesModel,
     minimumDepositLimitsModel,
     supportedCurrenciesByNetworksModel,
+    transferFeesModel,
 }
