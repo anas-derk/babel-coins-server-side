@@ -50,24 +50,10 @@ const minimum_deposit_limits_list = [
     },
     {
         depositType: "crypto",
-        network: "TRON",
-        currencyName: "USDT",
-        symbol: "USDT",
-        amount: 10,
-    },
-    {
-        depositType: "crypto",
         network: "ETHEREUM",
         currencyName: "ETHER",
         symbol: "ETH",
         amount: 0.002,
-    },
-    {
-        depositType: "crypto",
-        network: "ETHEREUM",
-        currencyName: "USDT",
-        symbol: "USDT",
-        amount: 10,
     },
     {
         depositType: "crypto",
@@ -78,13 +64,6 @@ const minimum_deposit_limits_list = [
     },
     {
         depositType: "crypto",
-        network: "POLYGON",
-        currencyName: "USDT",
-        symbol: "USDT",
-        amount: 10,
-    },
-    {
-        depositType: "crypto",
         network: "BSC",
         currencyName: "BNB",
         symbol: "BNB",
@@ -92,10 +71,10 @@ const minimum_deposit_limits_list = [
     },
     {
         depositType: "crypto",
-        network: "BSC",
+        network: "TRON,ETHEREUM,POLYGON,BSC",
         currencyName: "USDT",
         symbol: "USDT",
-        amount: 0.009,
+        amount: 10,
     },
 ];
 

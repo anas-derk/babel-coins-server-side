@@ -47,13 +47,16 @@ app.listen(PORT, () => {
 
 const   usersRouter = require("./routes/users.router"),
         currenciesRouter = require("./routes/currencies.router"),
-        transferFeesRouter = require("./routes/transfer_fees.router");
+        transferFeesRouter = require("./routes/transfer_fees.router"),
+        minimumDepositLimits = require("./routes/minimum_deposit_limits.router");
 
 app.use("/users", usersRouter);
 
 app.use("/currencies", currenciesRouter);
 
 app.use("/transfer-fees", transferFeesRouter);
+
+app.use("/minimum-deposit-limits", minimumDepositLimits);
 
 /* End Handle The Routes */
 
