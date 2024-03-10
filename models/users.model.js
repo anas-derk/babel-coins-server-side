@@ -129,8 +129,6 @@ async function getAddressesByCurrenecyName(userId, currencyName) {
     }
 }
 
-// Define Create New User Function
-
 async function createNewUser(email) {
     try {
         // Check If Email Is Exist
@@ -452,6 +450,34 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
     }
 }
 
+async function updateUserInfo(userId, newUserInfo) {
+    try{
+        if (newUserInfo.password) {
+            newUserInfo.password = await hash(newUserInfo.password, 10);
+        }
+        if(newUserInfo.secretCode) {
+            newUserInfo.secretCode = await hash(newUserInfo.secretCode, 10);
+        }
+        const user = await userModel.findOneAndUpdate({ _id: userId }, newUserInfo);
+        if (user) {
+            return {
+                msg: "Updating User Info Process Has Been Successfully !!",
+                error: false,
+                data: {},
+            }
+        }
+        return {
+            msg: "Sorry, The User Is Not Exist !!, Please Enter Another User Id ..",
+            error: true,
+            data: {},
+        };
+    }
+    catch(err) {
+        console.log(err);
+        throw Error(err);
+    }
+}
+
 module.exports = {
     login,
     getUserInfo,
@@ -460,4 +486,5 @@ module.exports = {
     createNewUser,
     sendMoney,
     updateUserBalance,
+    updateUserInfo,
 }

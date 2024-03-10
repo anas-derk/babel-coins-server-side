@@ -1,6 +1,5 @@
 const { getResponseObject, checkIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
-
 async function getUserLogin(req, res) {
     try{
         const   email = req.query.email,
@@ -126,15 +125,6 @@ async function postCreateUserAccount(req, res) {
     catch(err) {
         console.log(err);
         await res.status(500).json(getResponseObject(err.message, true, {}));
-    }
-}
-
-async function putUpdateUserData(req, res) {
-    try{
-        const { updateUserData } = require("../models/users.model");
-    }
-    catch(err) {
-        await res.status(500).json(err);
     }
 }
 
@@ -401,14 +391,24 @@ async function postReceiveMoneyOnWallet(req, res) {
     }
 }
 
+async function putUpdateUserInfo(req, res) {
+    try{
+        const { updateUserInfo } = require("../models/users.model");
+        await res.json(await updateUserInfo(req.data._id, req.body));
+    }
+    catch(err) {
+        await res.status(500).json(getResponseObject(err.message, true, {}));
+    }
+}
+
 module.exports = {
     getUserInfo,
     getUserLogin,
     getAllBalances,
     getAddressesByCurrenecyName,
     postCreateUserAccount,
-    putUpdateUserData,
     postSendMoney,
     postReceiveMoneyOnWallet,
     postAccountVerificationCode,
+    putUpdateUserInfo,
 }
