@@ -3,14 +3,19 @@ const { accountVerificationCodesModel } = require("../models/all.models");
 async function addNewAccountVerificationCode(email, code) {
     try{
         const accountVerificationCode = await accountVerificationCodesModel.findOne({ email });
+        const creatingDate = new Date(Date.now());
+        const expirationDate = new Date(creatingDate.getTime() + 24 * 60 * 60 * 1000);
         if (accountVerificationCode) {
-            const creatingDate = new Date(Date.now());
+            const newRequestTimeCount = accountVerificationCode.requestTimeCount + 1;
             await accountVerificationCodesModel.updateOne({ email },
                 {
                     code,
-                    requestTimeCount: accountVerificationCode.requestTimeCount + 1,
+                    requestTimeCount: newRequestTimeCount,
                     createdDate: creatingDate,
-                    expirationDate: new Date(creatingDate.getTime() + 24 * 60 * 60 * 1000),
+                    expirationDate: expirationDate,
+                    isBlockingFromReceiveTheCode: newRequestTimeCount >= 5 ? true: false,
+                    receiveBlockingExpirationDate:
+                        newRequestTimeCount >=5 ? expirationDate : accountVerificationCode.receiveBlockingExpirationDate,
                 }
             );
             return {
@@ -19,12 +24,11 @@ async function addNewAccountVerificationCode(email, code) {
                 data: {},
             }
         }
-        const creatingDate = new Date(Date.now());
         const newAccountCode = new accountVerificationCodesModel({
             email,
             code,
             createdDate: creatingDate,
-            expirationDate: new Date(creatingDate.getTime() + 24 * 60 * 60 * 1000),
+            expirationDate: expirationDate,
         });
         await newAccountCode.save();
         return {
@@ -70,7 +74,11 @@ async function isBlockingFromReceiveTheCodeAndReceiveBlockingExpirationDate(emai
     try{
         const accountVerificationCode = await accountVerificationCodesModel.findOne({ email });
         if (accountVerificationCode) {
-            if (accountVerificationCode.isBlockingFromReceiveTheCode) {
+            const currentDate = new Date(Date.now());
+            if (
+                accountVerificationCode.isBlockingFromReceiveTheCode &&
+                currentDate < accountVerificationCode.receiveBlockingExpirationDate
+            ) {
                 return {
                     msg: "Sorry, This Email Has Been Blocked From Receiving Code Messages For 24 Hours Due To Exceeding The Maximum Number Of Resend Attempts !!",
                     error: true,
