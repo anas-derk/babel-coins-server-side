@@ -32,22 +32,22 @@ const supported_currencies_by_networks_list = [
     {
         currencyName: "TRX",
         symbol: "TRX",
-        networks: ["TRON", "BSC"],
+        networks: ["TRON"],
     },
     {
         currencyName: "MATIC",
         symbol: "MATIC",
-        networks: ["POLYGON", "ETHEREUM", "BSC"],
+        networks: ["POLYGON"],
     },
     {
         currencyName: "ETHER",
         symbol: "ETH",
-        networks: ["ETHEREUM", "BSC"],
+        networks: ["ETHEREUM"],
     },
     {
         currencyName: "BNB",
         symbol: "BNB",
-        networks: ["ETHEREUM", "BSC"],
+        networks: ["BSC"],
     },
 ];
 
