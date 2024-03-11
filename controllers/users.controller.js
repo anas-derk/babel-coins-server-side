@@ -167,9 +167,8 @@ async function postSendMoney(req, res) {
         const checkResult = checkIsExistValueForFieldsAndDataTypes([
             { fieldName: "Transfer Type", fieldValue: transactionData.transferType, dataType: "string", isRequiredValue: true },
             { fieldName: "Transfer Currency Type", fieldValue: transactionData.transferCurrencyType, dataType: "string", isRequiredValue: true },
-            { fieldName: "Network Name", fieldValue: transactionData.network, dataType: "string", isRequiredValue: true },
             { fieldName: "Currency Name", fieldValue: transactionData.currencyName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Amount", fieldValue: transactionData.amount, dataType: "string", isRequiredValue: true },
+            { fieldName: "Amount", fieldValue: transactionData.amount, dataType: "number", isRequiredValue: true },
         ]);
         if (checkResult.error) {
             await res.status(400).json(checkResult);
@@ -179,11 +178,15 @@ async function postSendMoney(req, res) {
             await res.status(400).json(getResponseObject("Please Send Valid Transfer Type !!", true, {}));
             return;
         }
-        if (transactionData.transferCurrencyType !== "fiat" && transactionData.transferType !== "crypto") {
-            await res.status(400).json(getResponseObject("Please Send Valid Transfer Type !!", true, {}));
+        if (transactionData.transferCurrencyType !== "fiat" && transactionData.transferCurrencyType !== "crypto") {
+            await res.status(400).json(getResponseObject("Please Send Valid Transfer Currency Type !!", true, {}));
             return;
         }
-        if (transactionData.transferType === "crypto") {
+        if(transactionData.transferCurrencyType === "crypto" && !transactionData.network){
+            await res.status(400).json(getResponseObject("Invalid Request, Please Send Network Name !!", true, {}));
+            return;
+        }
+        if (transactionData.transferCurrencyType === "crypto") {
             switch(transactionData.network) {
                 case "TRON": {
                     const TronWeb = require("tronweb");
