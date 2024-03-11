@@ -431,6 +431,7 @@ async function deposit(userId, network, currency, currencyIndex, newAmount, newT
                                 currencyName: currency,
                                 depositorId: userId,
                                 amount: newAmount,
+                                transactionId: newTransactionId,
                             });
                             if (!result.error) {
                                 return {
@@ -456,6 +457,7 @@ async function deposit(userId, network, currency, currencyIndex, newAmount, newT
                                 currencyName: currency,
                                 depositorId: userId,
                                 amount: newAmount,
+                                transactionId: newTransactionId,
                             });
                             if (!result.error) {
                                 return {
