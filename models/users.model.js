@@ -281,7 +281,6 @@ async function updateUserBalanceOnSendMoney(userId, balances, balanceItemIndex, 
 
 async function sendMoney(userId, transactionData) {
     try {
-        // Check If Email Is Exist
         const user = await userModel.findOne({ _id: userId });
         if (user) {
             const { get_transfer_limits_by_currency_name_and_tranasfer_type } = require("../models/transfer_limits.model");

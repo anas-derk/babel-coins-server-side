@@ -192,6 +192,10 @@ const transferFeesShema = mongoose.Schema({
         type: String,
         required: true,
     },
+    transferCurrencyType: {
+        type: String,
+        required: true,
+    },
     network: String,
     currencyName: {
         type: String,
