@@ -215,7 +215,7 @@ async function postSendMoney(req, res) {
                                 }
                                 if (transactionData.transferType === "external") {
                                     const { sendMoneyOnBlockChain } = require("../global/functions");
-                                    const transactionId = await sendMoneyOnBlockChain(
+                                    const transactionResult = await sendMoneyOnBlockChain(
                                         transactionData.network,
                                         "trx",
                                         process.env.BABEL_CENTRAL_WALLET_ON_TRON,
@@ -223,6 +223,7 @@ async function postSendMoney(req, res) {
                                         transactionData.amount,
                                         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
                                     );
+                                    console.log(transactionResult);
                                     const { createNewTransfer } = require("../models/transfers.model");
                                     const result1 = await createNewTransfer({
                                         transferType: "external",
@@ -232,7 +233,7 @@ async function postSendMoney(req, res) {
                                         senderId: req.data._id,
                                         receiverAddress: transactionData.receipentAddress,
                                         amount: transactionData.amount,
-                                        transactionId,
+                                        transactionId: transactionResult.transaction.txID,
                                         fee: result.data,
                                     });
                                     await res.json(result1);
@@ -262,7 +263,7 @@ async function postSendMoney(req, res) {
                                 }
                                 if (transactionData.transferType === "external") {
                                     const { sendMoneyOnBlockChain } = require("../global/functions");
-                                    const transactionId = await sendMoneyOnBlockChain(
+                                    const transactionResult = await sendMoneyOnBlockChain(
                                         transactionData.network,
                                         "usdt",
                                         process.env.BABEL_CENTRAL_WALLET_ON_TRON,
@@ -270,6 +271,7 @@ async function postSendMoney(req, res) {
                                         transactionData.amount,
                                         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
                                     );
+                                    console.log(transactionResult);
                                     const { createNewTransfer } = require("../models/transfers.model");
                                     const result1 = await createNewTransfer({
                                         transferType: "external",
@@ -279,7 +281,7 @@ async function postSendMoney(req, res) {
                                         senderId: req.data._id,
                                         receiverAddress: transactionData.receipentAddress,
                                         amount: transactionData.amount,
-                                        transactionId,
+                                        transactionId: transactionResult.transaction.txID,
                                         fee: result.data,
                                     });
                                     await res.json(result1);

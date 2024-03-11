@@ -117,7 +117,7 @@ async function sendMoneyOnBlockChain(network, currency, senderAddress, receipent
             const tronWeb = new TronWeb({
                 fullHost: process.env.TRON_NODE_BASE_API_URL,
                 headers: { 'TRON-PRO-API-KEY': process.env.TRON_NODE_API_KEY },
-                privateKey: "U2FsdGVkX1+1Mwk+Z1WajOhZVUbJnJNHVZHsyiVW5pUv5fjTTj7AZOuLlyJgafbq3YbMysrErZaGz/7NSw/TKSRBemxIDJjzwQhIS6QwpALvY/ZndVE0GYXS2hmP+Y9P",
+                privateKey: senderPrivateKey,
             });
             switch(currency){
                 case "trx": {
