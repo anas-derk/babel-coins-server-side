@@ -198,11 +198,11 @@ async function postSendMoney(req, res) {
                         case "TRX": {
                             const { sendMoney } = require("../models/users.model");
                             const result = await sendMoney(req.data._id, transactionData);
-                            console.log(result)
+                            console.log(result);
                             if (!result.error) {
                                 if (transactionData.transferType === "internal") {
                                     const { createNewTransfer } = require("../models/transfers.model");
-                                    const result = await createNewTransfer({
+                                    const result1 = await createNewTransfer({
                                         transferType: "internal",
                                         transferCurrencyType: "crypto",
                                         currencyName: transactionData.currencyName,
@@ -210,7 +210,7 @@ async function postSendMoney(req, res) {
                                         receiverId: transactionData.receiverId,
                                         amount: transactionData.amount,
                                     });
-                                    await res.json(result);
+                                    await res.json(result1);
                                     return;
                                 }
                                 if (transactionData.transferType === "external") {
@@ -224,22 +224,23 @@ async function postSendMoney(req, res) {
                                     //     transactionData.amount,
                                     //     process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
                                     // );
-                                    // const { createNewTransfer } = require("../models/transfers.model");
-                                    // const result = await createNewTransfer({
-                                    //     transferType: "external",
-                                    //     transferCurrencyType: "crypto",
-                                    //     network,
-                                    //     currencyName: transactionData.currencyName,
-                                    //     senderId: req.data._id,
-                                    //     receiverAddress: transactionData.receipentAddress,
-                                    //     amount: transactionData.amount,
-                                    //     transactionId,
-                                    // });
-                                    // await res.json(result);
+                                    const { createNewTransfer } = require("../models/transfers.model");
+                                    const result1 = await createNewTransfer({
+                                        transferType: "external",
+                                        transferCurrencyType: "crypto",
+                                        network: transactionData.network,
+                                        currencyName: transactionData.currencyName,
+                                        senderId: req.data._id,
+                                        receiverAddress: transactionData.receipentAddress,
+                                        amount: transactionData.amount,
+                                        transactionId: "aaa",
+                                    });
+                                    await res.json(result1);
                                     return;
                                 }
                             }
-                            break;
+                            await res.json(result);
+                            return;
                         }
                         case "USDT": {
                             const { sendMoney } = require("../models/users.model");
@@ -358,6 +359,7 @@ async function postSendMoney(req, res) {
         }
     }
     catch(err) {
+        console.log(err)
         if (!err.message.includes("insufficient funds")) {
             await res.status(500).json(getResponseObject(err.message, true, {}));
             return;
