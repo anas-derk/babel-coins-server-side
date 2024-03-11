@@ -1,17 +1,17 @@
 const { transferLimitsModel } = require("../models/all.models");
 
-async function getTransferLimitsByCurrencyAndNetworkName(currencyName, network) {
+async function get_transfer_limits_by_currency_name_and_tranasfer_type(transferInfo) {
     try{
-        const transaferLimitsDetails = await transferLimitsModel.findOne({ currencyName, network });
+        const transaferLimitsDetails = await transferLimitsModel.findOne(transferInfo);
         if (transaferLimitsDetails) {
             return {
-                msg: "Get Transfer Limits By Currency And Network Name Process Has Been Successfully !!",
+                msg: "Get Transfer Limits By Currency Name And Transfer Type Process Has Been Successfully !!",
                 error: false,
-                data: await transferLimitsModel.findOne({ currencyName, network })
+                data: await transferLimitsModel.findOne(transferInfo)
             }
         }
         return {
-            msg: "Sorry, Currency Name Or Network Name Is Not Exist !!",
+            msg: "Sorry, Currency Name Or Network Name Or Transfer Type Is Not Exist !!",
             error: true,
             data: {}
         }
@@ -22,5 +22,5 @@ async function getTransferLimitsByCurrencyAndNetworkName(currencyName, network) 
 }
 
 module.exports = {
-    getTransferLimitsByCurrencyAndNetworkName,
+    get_transfer_limits_by_currency_name_and_tranasfer_type,
 }
