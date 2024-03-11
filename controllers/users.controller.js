@@ -314,6 +314,7 @@ async function postReceiveMoneyOnWallet(req, res) {
             await res.status(400).json(checkResult);
             return;
         }
+        const depositDetails = req.body;
         switch(receiveDetails.chain) {
             case "TRON": {
                 const TronWeb = require("tronweb");
@@ -321,7 +322,7 @@ async function postReceiveMoneyOnWallet(req, res) {
                     await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                     return;
                 }
-                if (req.body.subscriptionType === "INCOMING_NATIVE_TX") {
+                if (depositDetails.subscriptionType === "INCOMING_NATIVE_TX") {
                     const { deposit } = require("../models/users.model");
                     await res.json(
                         await deposit(
@@ -329,14 +330,18 @@ async function postReceiveMoneyOnWallet(req, res) {
                             receiveDetails.chain,
                             "TRX",
                             0,
-                            Number(req.body.amount),
-                            req.body.txId,
+                            Number(depositDetails.amount),
+                            depositDetails.txId,
                         )
                     );
                     return;
                 }
-                if (req.body.subscriptionType === "INCOMING_FUNGIBLE_TX") {
-                    if (req.body.contractAddress === "USDT_TRON") {
+                if (depositDetails.subscriptionType === "INCOMING_FUNGIBLE_TX") {
+                    if (!depositDetails.contractAddress) {
+                        await res.status(400).json(getResponseObject("Please Send Contract Address !!", true, {}));
+                        return;
+                    }
+                    if (depositDetails.contractAddress === "USDT_TRON") {
                         const { deposit } = require("../models/users.model");
                         await res.json(
                             await deposit(
@@ -344,8 +349,8 @@ async function postReceiveMoneyOnWallet(req, res) {
                                 receiveDetails.chain,
                                 "USDT",
                                 1,
-                                Number(req.body.amount),
-                                req.body.txId,
+                                Number(depositDetails.amount),
+                                depositDetails.txId,
                             )
                         );
                         return;
@@ -386,7 +391,6 @@ async function postReceiveMoneyOnWallet(req, res) {
         }
     }
     catch(err) {
-        console.log(err);
         await res.status(500).json(getResponseObject(err.message, true, {}));
     }
 }
