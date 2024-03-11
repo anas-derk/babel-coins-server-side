@@ -279,6 +279,49 @@ const depositsShema = mongoose.Schema({
 
 const depositsModel = mongoose.model("deposit", depositsShema);
 
+// Create Transfers Schema
+
+const transfersShema = mongoose.Schema({
+    transferType: {
+        type: String,
+        required: true,
+    },
+    transferCurrencyType: {
+        type: String,
+        required: true,
+    },
+    network: String,
+    currencyName: {
+        type: String,
+        required: true,
+    },
+    senderId: {
+        type: String,
+        required: true,
+    },
+    receiverId: String,
+    senderAddress: {
+        type: String,
+        required: true,
+    },
+    receiverAddress: {
+        type: String,
+        required: true,
+    },
+    amount: {
+        type: Number,
+        required: true,
+    },
+    dateOfTransfer: {
+        type: Date,
+        default: Date.now(),
+    },
+});
+
+// Create Transfers Model From Transfers Schema
+
+const transfersModel = mongoose.model("transfer", transfersShema);
+
 module.exports = {
     mongoose,
     userModel,
@@ -288,4 +331,5 @@ module.exports = {
     transferFeesModel,
     transferLimitsModel,
     depositsModel,
+    transfersModel,
 }
