@@ -1,19 +1,30 @@
 const { getResponseObject, checkIsExistValueForFieldsAndDataTypes } = require("../global/functions");
 
-async function getFeeByCurrencyAndNetworkName(req, res) {
+async function get_fee_by_currency_name_and_tranasfer_type(req, res) {
     try{
         const   currencyName = req.query.currencyName,
+                transferType = req.query.transferType,
                 network = req.query.network;
         const checkResult = checkIsExistValueForFieldsAndDataTypes([
             { fieldName: "Currency Name", fieldValue: currencyName, dataType: "string", isRequiredValue: true },
-            { fieldName: "Network Name", fieldValue: network, dataType: "string", isRequiredValue: true },
+            { fieldName: "Transfer Type", fieldValue: transferType, dataType: "string", isRequiredValue: true },
         ]);
         if (checkResult.error) {
             await res.status(400).json(checkResult);
             return;
         }
-        const { getFeeByCurrencyAndNetworkName } = require("../models/transfer_fees.model.js");
-        await res.json(await getFeeByCurrencyAndNetworkName(currencyName, network));
+        if(transferType !== "fiat" && transferType !== "crypto") {
+            await res.status(400).json(getResponseObject("Invalid Request, Please Send Valid Transfer Type !!", true, {}));
+            return;
+        }
+        if(transferType === "crypto" && !network){
+            await res.status(400).json(getResponseObject("Invalid Request, Please Send Network Name !!", true, {}));
+            return;
+        }
+        const { get_fee_by_currency_name_and_tranasfer_type } = require("../models/transfer_fees.model.js");
+        await res.json(await get_fee_by_currency_name_and_tranasfer_type(
+            transferType === "crypto" ? { currencyName, transferType, network } : { currencyName, transferType }
+        ));
     }
     catch(err) {
         await res.status(500).json(getResponseObject(err.message, true, {}));
@@ -21,5 +32,5 @@ async function getFeeByCurrencyAndNetworkName(req, res) {
 }
 
 module.exports = {
-    getFeeByCurrencyAndNetworkName,
+    get_fee_by_currency_name_and_tranasfer_type,
 }

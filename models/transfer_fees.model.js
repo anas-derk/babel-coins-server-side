@@ -1,17 +1,17 @@
 const { transferFeesModel } = require("../models/all.models");
 
-async function getFeeByCurrencyAndNetworkName(currencyName, network) {
+async function get_fee_by_currency_name_and_tranasfer_type(transferInfo) {
     try{
-        const transferFeeDetails = await transferFeesModel.findOne({ currencyName, network });
+        const transferFeeDetails = await transferFeesModel.findOne(transferInfo);
         if (transferFeeDetails) {
             return {
-                msg: "Get Transfer Fee By Currency And Network Name Process Has Been Successfully !!",
+                msg: "Get Transfer Fee By Currency Name And Transfer Type Process Has Been Successfully !!",
                 error: false,
-                data: await transferFeesModel.findOne({ currencyName, network })
+                data: await transferFeesModel.findOne(transferInfo),
             }
         }
         return {
-            msg: "Sorry, Currency Name Or Network Name Is Not Exist !!",
+            msg: "Sorry, Currency Name Or Network Name Or Transfer Type Is Not Exist !!",
             error: true,
             data: {}
         }
@@ -22,5 +22,5 @@ async function getFeeByCurrencyAndNetworkName(currencyName, network) {
 }
 
 module.exports = {
-    getFeeByCurrencyAndNetworkName,
+    get_fee_by_currency_name_and_tranasfer_type,
 }
