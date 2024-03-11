@@ -7,7 +7,7 @@ async function get_fee_by_currency_name_and_tranasfer_type(transferInfo) {
             return {
                 msg: "Get Transfer Fee By Currency Name And Transfer Type Process Has Been Successfully !!",
                 error: false,
-                data: await transferFeesModel.findOne(transferInfo),
+                data: transferFeeDetails,
             }
         }
         return {
