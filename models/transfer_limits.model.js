@@ -2,6 +2,7 @@ const { transferLimitsModel } = require("../models/all.models");
 
 async function get_transfer_limits_by_currency_name_and_tranasfer_type(transferInfo) {
     try{
+        console.log(transferInfo)
         const transaferLimitsDetails = await transferLimitsModel.findOne(transferInfo);
         if (transaferLimitsDetails) {
             return {

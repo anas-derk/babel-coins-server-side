@@ -284,117 +284,142 @@ async function sendMoney(userId, transactionData) {
         // Check If Email Is Exist
         const user = await userModel.findOne({ _id: userId });
         if (user) {
-            const { get_fee_by_currency_name_and_tranasfer_type } = require("../models/transfer_fees.model");
-            const result = await get_fee_by_currency_name_and_tranasfer_type(
-                transactionData
-            );
-            if(!result.error) {
-                switch (transactionData.network) {
-                    case "TRON": {
-                        switch(transactionData.currency) {
-                            case "TRX": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    0,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
-                            }
-                            case "USDT": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    1,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
+            const { get_transfer_limits_by_currency_name_and_tranasfer_type } = require("../models/transfer_limits.model");
+            const transactionInfo = transactionData.transferCurrencyType === "crypto" ? {
+                transferType: transactionData.transferType,
+                currencyName: transactionData.currencyName,
+                network: transactionData.network,
+            } : {
+                transferType: transactionData.transferType,
+                currencyName: transactionData.currencyName,
+            };
+            const result = await get_transfer_limits_by_currency_name_and_tranasfer_type(transactionInfo);
+            if (!result.error) {
+                if (transactionData.amount < result.data.minInOneTime) {
+                    return {
+                        msg: `Sorry, Please Send Amount Greater Than ${result.data.minInOneTime}`,
+                        error: true,
+                        data: {},
+                    }
+                }
+                if (transactionData.amount > result.data.maxInOneTime) {
+                    return {
+                        msg: `Sorry, Please Send Amount Less Than ${result.data.maxInOneTime}`,
+                        error: true,
+                        data: {},
+                    }
+                }
+                const { get_fee_by_currency_name_and_tranasfer_type } = require("../models/transfer_fees.model");
+                const result = await get_fee_by_currency_name_and_tranasfer_type(transactionInfo);
+                if(!result.error) {
+                    switch (transactionData.network) {
+                        case "TRON": {
+                            switch(transactionData.currency) {
+                                case "TRX": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        0,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
+                                case "USDT": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        1,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
                             }
                         }
-                    }
-                    case "ETHEREUM": {
-                        switch (transactionData.currency) {
-                            case "ETHER": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    2,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
-                            }
-                            case "USDT": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    3,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
-                            }
-                        }
-                    }
-                    case "POLYGON": {
-                        switch (transactionData.currency) {
-                            case "MATIC": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    4,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
-                            }
-                            case "USDT": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    5,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
+                        case "ETHEREUM": {
+                            switch (transactionData.currency) {
+                                case "ETHER": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        2,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
+                                case "USDT": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        3,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
                             }
                         }
-                    }
-                    case "BSC": {
-                        switch (transactionData.currency) {
-                            case "BNB": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    6,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
+                        case "POLYGON": {
+                            switch (transactionData.currency) {
+                                case "MATIC": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        4,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
+                                case "USDT": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        5,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
                             }
-                            case "USDT": {
-                                return await updateUserBalanceOnSendMoney(
-                                    userId,
-                                    user.balances,
-                                    6,
-                                    transactionData.network,
-                                    transactionData.currency,
-                                    transactionData.amount,
-                                    result.data.fee,
-                                );
+                        }
+                        case "BSC": {
+                            switch (transactionData.currency) {
+                                case "BNB": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        6,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
+                                case "USDT": {
+                                    return await updateUserBalanceOnSendMoney(
+                                        userId,
+                                        user.balances,
+                                        6,
+                                        transactionData.network,
+                                        transactionData.currency,
+                                        transactionData.amount,
+                                        result.data.fee,
+                                    );
+                                }
                             }
                         }
                     }
                 }
+                return result;
             }
             return result;
         }

@@ -198,6 +198,7 @@ async function postSendMoney(req, res) {
                         case "TRX": {
                             const { sendMoney } = require("../models/users.model");
                             const result = await sendMoney(req.data._id, transactionData);
+                            console.log(result)
                             if (!result.error) {
                                 if (transactionData.transferType === "internal") {
                                     const { createNewTransfer } = require("../models/transfers.model");
@@ -213,27 +214,28 @@ async function postSendMoney(req, res) {
                                     return;
                                 }
                                 if (transactionData.transferType === "external") {
-                                    const { sendMoneyOnBlockChain } = require("../global/functions");
-                                    const transactionId = await sendMoneyOnBlockChain(
-                                        transactionData.network,
-                                        "trx",
-                                        process.env.BABEL_CENTRAL_WALLET_ON_TRON,
-                                        transactionData.receipentAddress,
-                                        transactionData.amount,
-                                        process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
-                                    );
-                                    const { createNewTransfer } = require("../models/transfers.model");
-                                    const result = await createNewTransfer({
-                                        transferType: "external",
-                                        transferCurrencyType: "crypto",
-                                        network,
-                                        currencyName: transactionData.currencyName,
-                                        senderId: req.data._id,
-                                        receiverAddress: transactionData.receipentAddress,
-                                        amount: transactionData.amount,
-                                        transactionId,
-                                    });
-                                    await res.json(result);
+                                    console.log("ex")
+                                    // const { sendMoneyOnBlockChain } = require("../global/functions");
+                                    // const transactionId = await sendMoneyOnBlockChain(
+                                    //     transactionData.network,
+                                    //     "trx",
+                                    //     process.env.BABEL_CENTRAL_WALLET_ON_TRON,
+                                    //     transactionData.receipentAddress,
+                                    //     transactionData.amount,
+                                    //     process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                                    // );
+                                    // const { createNewTransfer } = require("../models/transfers.model");
+                                    // const result = await createNewTransfer({
+                                    //     transferType: "external",
+                                    //     transferCurrencyType: "crypto",
+                                    //     network,
+                                    //     currencyName: transactionData.currencyName,
+                                    //     senderId: req.data._id,
+                                    //     receiverAddress: transactionData.receipentAddress,
+                                    //     amount: transactionData.amount,
+                                    //     transactionId,
+                                    // });
+                                    // await res.json(result);
                                     return;
                                 }
                             }
@@ -282,6 +284,10 @@ async function postSendMoney(req, res) {
                                 }
                             }
                             break;
+                        }
+                        default: {
+                            await res.status(400).json(getResponseObject("Please Send Valid Currency Name !!", true, {}));
+                            return;
                         }
                     }
                     break;
