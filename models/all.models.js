@@ -141,7 +141,7 @@ const accountVerificationCodesModel = mongoose.model("account_verification_codes
 // Create Minimum Deposit Limits Schema
 
 const minimumDepositLimitsShema = mongoose.Schema({
-    debositCurrencyType: {
+    depositCurrencyType: {
         type: String,
         required: true,
     },
@@ -247,12 +247,12 @@ const transferLimitsModel = mongoose.model("transfer_limits", transferLimitsShem
 
 // Create Debosits Schema
 
-const debositsShema = mongoose.Schema({
+const depositsShema = mongoose.Schema({
     debositType: {
         type: String,
         required: true,
     },
-    debositCurrencyType: {
+    depositCurrencyType: {
         type: String,
         required: true,
     },
@@ -261,7 +261,7 @@ const debositsShema = mongoose.Schema({
         type: String,
         required: true,
     },
-    debositId: {
+    depositorId: {
         type: String,
         required: true,
     },
@@ -269,7 +269,7 @@ const debositsShema = mongoose.Schema({
         type: Number,
         required: true,
     },
-    dateOfDebosit: {
+    dateOfDeposit: {
         type: Date,
         default: Date.now(),
     },
@@ -277,7 +277,7 @@ const debositsShema = mongoose.Schema({
 
 // Create Debosits Model From Debosits Schema
 
-const debositsModel = mongoose.model("debosit", debositsShema);
+const depositsModel = mongoose.model("deposit", depositsShema);
 
 module.exports = {
     mongoose,
@@ -287,5 +287,5 @@ module.exports = {
     supportedCurrenciesByNetworksModel,
     transferFeesModel,
     transferLimitsModel,
-    debositsModel,
+    depositsModel,
 }
