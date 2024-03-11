@@ -198,7 +198,6 @@ async function postSendMoney(req, res) {
                         case "TRX": {
                             const { sendMoney } = require("../models/users.model");
                             const result = await sendMoney(req.data._id, transactionData);
-                            console.log(result);
                             if (!result.error) {
                                 if (transactionData.transferType === "internal") {
                                     const { createNewTransfer } = require("../models/transfers.model");
@@ -234,6 +233,7 @@ async function postSendMoney(req, res) {
                                         receiverAddress: transactionData.receipentAddress,
                                         amount: transactionData.amount,
                                         transactionId: "aaa",
+                                        fee: result.data,
                                     });
                                     await res.json(result1);
                                     return;

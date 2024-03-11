@@ -259,14 +259,14 @@ async function createNewUser(email) {
 
 async function updateUserBalanceOnSendMoney(userId, balances, balanceItemIndex, network, currency, amount, fee){
     try{
-        if (balances[balanceItemIndex].balance < amount + fee) {
+        if (balances[balanceItemIndex].validDepositeBalance < amount + fee) {
             return {
                 msg: "Sorry, There Is Not Enough Balance To Complete The Transaction !!",
                 error: true,
                 data: {},
             };
         }    
-        balances[balanceItemIndex].balance = balances[balanceItemIndex].balance - (amount + fee);
+        balances[balanceItemIndex].validDepositeBalance = balances[balanceItemIndex].validDepositeBalance - (amount + fee);
         await userModel.updateOne({ _id: userId }, { balances });
         return {
             msg: `Updating User Balance For ${currency} In ${network} Network Has Been Successfully !!`,
@@ -315,28 +315,42 @@ async function sendMoney(userId, transactionData) {
                 if(!result1.error) {
                     switch (transactionData.network) {
                         case "TRON": {
-                            switch(transactionData.currency) {
+                            switch(transactionData.currencyName) {
                                 case "TRX": {
-                                    return await updateUserBalanceOnSendMoney(
+                                    const result2 = await updateUserBalanceOnSendMoney(
                                         userId,
                                         user.balances,
                                         0,
                                         transactionData.network,
-                                        transactionData.currency,
+                                        transactionData.currencyName,
                                         transactionData.amount,
                                         result1.data.fee,
                                     );
+                                    if (!result2.error) {
+                                        return {
+                                            ...result2,
+                                            data: result1.data.fee,
+                                        }
+                                    }
+                                    return result2;
                                 }
                                 case "USDT": {
-                                    return await updateUserBalanceOnSendMoney(
+                                    const result2 = await updateUserBalanceOnSendMoney(
                                         userId,
                                         user.balances,
                                         1,
                                         transactionData.network,
-                                        transactionData.currency,
+                                        transactionData.currencyName,
                                         transactionData.amount,
                                         result1.data.fee,
                                     );
+                                    if (!result2.error) {
+                                        return {
+                                            ...result2,
+                                            data: result1.data.fee,
+                                        }
+                                    }
+                                    return result2;
                                 }
                             }
                         }
