@@ -402,7 +402,7 @@ async function sendMoney(userId, transactionData) {
     }
 }
 
-async function updateUserBalance(userId, network, currency, currencyIndex, newAmount, newTransactionId){
+async function deposit(userId, network, currency, currencyIndex, newAmount, newTransactionId){
     try{
         const user = await userModel.findById(userId);
         if (user) {
@@ -416,11 +416,23 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
                                 balances: user.balances,
                                 lastTransactionId: newTransactionId
                             });
-                            return {
-                                msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
-                                error: false,
-                                data: user.balances,
+                            const { createNewDeposit } = require("../models/deposits.model");
+                            const result = await createNewDeposit({
+                                debositType: "external",
+                                depositCurrencyType: "crypto",
+                                network,
+                                currencyName: currency,
+                                depositorId: userId,
+                                amount: newAmount,
+                            });
+                            if (!result.error) {
+                                return {
+                                    msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
+                                    error: false,
+                                    data: user.balances,
+                                }
                             }
+                            return result;
                         }
                         case "USDT": {
                             if (newAmount < 10) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
@@ -429,11 +441,23 @@ async function updateUserBalance(userId, network, currency, currencyIndex, newAm
                                 balances: user.balances,
                                 lastTransactionId: newTransactionId
                             });
-                            return {
-                                msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
-                                error: false,
-                                data: user.balances,
+                            const { createNewDeposit } = require("../models/deposits.model");
+                            const result = await createNewDeposit({
+                                debositType: "external",
+                                depositCurrencyType: "crypto",
+                                network,
+                                currencyName: currency,
+                                depositorId: userId,
+                                amount: newAmount,
+                            });
+                            if (!result.error) {
+                                return {
+                                    msg: `${currency} Deposit Procsss On Network ${network} Has Been Successfully !!`,
+                                    error: false,
+                                    data: user.balances,
+                                }
                             }
+                            return result;
                         }
                     }
                 }
@@ -485,6 +509,6 @@ module.exports = {
     getAddressesByCurrenecyName,
     createNewUser,
     sendMoney,
-    updateUserBalance,
+    deposit,
     updateUserInfo,
 }

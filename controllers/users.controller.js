@@ -322,9 +322,9 @@ async function postReceiveMoneyOnWallet(req, res) {
                     return;
                 }
                 if (req.body.subscriptionType === "INCOMING_NATIVE_TX") {
-                    const { updateUserBalance } = require("../models/users.model");
+                    const { deposit } = require("../models/users.model");
                     await res.json(
-                        await updateUserBalance(
+                        await deposit(
                             receiveDetails.userId,
                             receiveDetails.chain,
                             "TRX",
@@ -337,9 +337,9 @@ async function postReceiveMoneyOnWallet(req, res) {
                 }
                 if (req.body.subscriptionType === "INCOMING_FUNGIBLE_TX") {
                     if (req.body.contractAddress === "USDT_TRON") {
-                        const { updateUserBalance } = require("../models/users.model");
+                        const { deposit } = require("../models/users.model");
                         await res.json(
-                            await updateUserBalance(
+                            await deposit(
                                 receiveDetails.userId,
                                 receiveDetails.chain,
                                 "USDT",
