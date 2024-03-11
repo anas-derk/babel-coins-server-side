@@ -300,18 +300,12 @@ const transfersShema = mongoose.Schema({
         required: true,
     },
     receiverId: String,
-    senderAddress: {
-        type: String,
-        required: true,
-    },
-    receiverAddress: {
-        type: String,
-        required: true,
-    },
+    receiverAddress: String,
     amount: {
         type: Number,
         required: true,
     },
+    transactionId: String,
     dateOfTransfer: {
         type: Date,
         default: Date.now(),

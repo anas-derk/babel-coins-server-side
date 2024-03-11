@@ -165,131 +165,186 @@ async function postSendMoney(req, res) {
     try{
         const transactionData = req.body;
         const checkResult = checkIsExistValueForFieldsAndDataTypes([
+            { fieldName: "Transfer Type", fieldValue: transactionData.transferType, dataType: "string", isRequiredValue: true },
+            { fieldName: "Transfer Currency Type", fieldValue: transactionData.transferCurrencyType, dataType: "string", isRequiredValue: true },
             { fieldName: "Network Name", fieldValue: transactionData.network, dataType: "string", isRequiredValue: true },
-            { fieldName: "Currency Name", fieldValue: transactionData.currency, dataType: "string", isRequiredValue: true },
-            { fieldName: "Receipent Address", fieldValue: transactionData.receipentAddress, dataType: "string", isRequiredValue: true },
+            { fieldName: "Currency Name", fieldValue: transactionData.currencyName, dataType: "string", isRequiredValue: true },
             { fieldName: "Amount", fieldValue: transactionData.amount, dataType: "string", isRequiredValue: true },
         ]);
         if (checkResult.error) {
             await res.status(400).json(checkResult);
             return;
         }
-        switch(transactionData.network) {
-            case "TRON": {
-                const TronWeb = require("tronweb");
-                if (!TronWeb.isAddress(transactionData.receipentAddress)) {
-                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
-                    return;
-                }
-                switch (transactionData.currency) {
-                    case "TRX": {
-                        if (transactionData.amount < 30) {
-                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 30 TRX !!", true, {}));
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(req.data._id, transactionData);
-                        await res.json(result1);
-                        if (!result1.error) {
-                            const { sendMoneyOnBlockChain } = require("../global/functions");
-                            const transactionHash = await sendMoneyOnBlockChain(
-                                transactionData.network,
-                                "trx",
-                                process.env.BABEL_CENTRAL_WALLET_ON_TRON,
-                                transactionData.receipentAddress,
-                                transactionData.amount,
-                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
-                            );
-                            console.log(transactionHash);
-                        }
-                        break;
-                    }
-                    case "USDT": {
-                        if (transactionData.amount < 10) {
-                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 10 USDT !!", true, {}));
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(req.data._id, transactionData);
-                        await res.json(result1);
-                        if (!result1.error) {
-                            const { sendMoneyOnBlockChain } = require("../global/functions");
-                            const transactionHash = await sendMoneyOnBlockChain(
-                                transactionData.network,
-                                "usdt",
-                                process.env.BABEL_CENTRAL_WALLET_ON_TRON,
-                                transactionData.receipentAddress,
-                                transactionData.amount,
-                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
-                            );
-                            console.log(transactionHash);
-                        }
-                        break;
-                    }
-                }
-                break;
-            }
-            case "ETHEREUM": {
-                const web3 = require("web3");
-                if(!web3.utils.isAddress(transactionData.receipentAddress)) {
-                    await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
-                    return;
-                }
-                switch (transactionData.currency) {
-                    case "ETHER": {
-                        if (transactionData.amount < 0.02) {
-                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 0.02 ETHER !!", true, {}));
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(req.data._id, transactionData);
-                        await res.json(result1);
-                        if (!result1.error) {
-                            const { sendMoneyOnBlockChain } = require("../global/functions");
-                            const transactionHash = await sendMoneyOnBlockChain(
-                                transactionData.network,
-                                "ether",
-                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
-                                transactionData.receipentAddress,
-                                transactionData.amount,
-                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_ETHEREUM,
-                            );
-                            console.log(transactionHash);
-                        }
-                        break;
-                    }
-                    case "USDT": {
-                        if (transactionData.amount < 5) {
-                            await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 5 USDT !!", true, {}));
-                            return;
-                        }
-                        const { sendMoney } = require("../models/users.model");
-                        const result1 = await sendMoney(req.data._id, transactionData);
-                        await res.json(result1);
-                        if (!result1.error) {
-                            const { sendMoneyOnBlockChain } = require("../global/functions");
-                            const transactionHash = await sendMoneyOnBlockChain(
-                                transactionData.network,
-                                "usdt",
-                                process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
-                                transactionData.receipentAddress,
-                                transactionData.amount,
-                                process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_ETHEREUM,
-                            );
-                            console.log(transactionHash);
-                        }
-                        break;
-                    }
-                    default: {
-                        await res.status(400).json(getResponseObject(`Please Send Valid Currency Name For ${transactionData.network} Network !!`, true, {}));
+        if (transactionData.transferType !== "internal" && transactionData.transferType !== "external") {
+            await res.status(400).json(getResponseObject("Please Send Valid Transfer Type !!", true, {}));
+            return;
+        }
+        if (transactionData.transferCurrencyType !== "fiat" && transactionData.transferType !== "crypto") {
+            await res.status(400).json(getResponseObject("Please Send Valid Transfer Type !!", true, {}));
+            return;
+        }
+        if (transactionData.transferType === "crypto") {
+            switch(transactionData.network) {
+                case "TRON": {
+                    const TronWeb = require("tronweb");
+                    if (!TronWeb.isAddress(transactionData.receipentAddress)) {
+                        await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
                         return;
                     }
+                    switch (transactionData.currencyName) {
+                        case "TRX": {
+                            const { sendMoney } = require("../models/users.model");
+                            const result = await sendMoney(req.data._id, transactionData);
+                            if (!result.error) {
+                                if (transactionData.transferType === "internal") {
+                                    const { createNewTransfer } = require("../models/transfers.model");
+                                    const result = await createNewTransfer({
+                                        transferType: "internal",
+                                        transferCurrencyType: "crypto",
+                                        currencyName: transactionData.currencyName,
+                                        senderId: req.data._id,
+                                        receiverId: transactionData.receiverId,
+                                        amount: transactionData.amount,
+                                    });
+                                    await res.json(result);
+                                    return;
+                                }
+                                if (transactionData.transferType === "external") {
+                                    const { sendMoneyOnBlockChain } = require("../global/functions");
+                                    const transactionId = await sendMoneyOnBlockChain(
+                                        transactionData.network,
+                                        "trx",
+                                        process.env.BABEL_CENTRAL_WALLET_ON_TRON,
+                                        transactionData.receipentAddress,
+                                        transactionData.amount,
+                                        process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                                    );
+                                    const { createNewTransfer } = require("../models/transfers.model");
+                                    const result = await createNewTransfer({
+                                        transferType: "external",
+                                        transferCurrencyType: "crypto",
+                                        network,
+                                        currencyName: transactionData.currencyName,
+                                        senderId: req.data._id,
+                                        receiverAddress: transactionData.receipentAddress,
+                                        amount: transactionData.amount,
+                                        transactionId,
+                                    });
+                                    await res.json(result);
+                                    return;
+                                }
+                            }
+                            break;
+                        }
+                        case "USDT": {
+                            const { sendMoney } = require("../models/users.model");
+                            const result = await sendMoney(req.data._id, transactionData);
+                            if (!result.error) {
+                                if (transactionData.transferType === "internal") {
+                                    const { createNewTransfer } = require("../models/transfers.model");
+                                    const result = await createNewTransfer({
+                                        transferType: "internal",
+                                        transferCurrencyType: "crypto",
+                                        currencyName: transactionData.currencyName,
+                                        senderId: req.data._id,
+                                        receiverId: transactionData.receiverId,
+                                        amount: transactionData.amount,
+                                    });
+                                    await res.json(result);
+                                    return;
+                                }
+                                if (transactionData.transferType === "external") {
+                                    const { sendMoneyOnBlockChain } = require("../global/functions");
+                                    const transactionId = await sendMoneyOnBlockChain(
+                                        transactionData.network,
+                                        "usdt",
+                                        process.env.BABEL_CENTRAL_WALLET_ON_TRON,
+                                        transactionData.receipentAddress,
+                                        transactionData.amount,
+                                        process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
+                                    );
+                                    const { createNewTransfer } = require("../models/transfers.model");
+                                    const result = await createNewTransfer({
+                                        transferType: "external",
+                                        transferCurrencyType: "crypto",
+                                        network,
+                                        currencyName: transactionData.currencyName,
+                                        senderId: req.data._id,
+                                        receiverAddress: transactionData.receipentAddress,
+                                        amount: transactionData.amount,
+                                        transactionId,
+                                    });
+                                    await res.json(result);
+                                    return;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    break;
                 }
-                break;
-            }
-            default: {
-                await res.status(400).json(getResponseObject("Please Send Valid Network Name !!", true, {}));
-                return;
+                case "ETHEREUM": {
+                    const web3 = require("web3");
+                    if(!web3.utils.isAddress(transactionData.receipentAddress)) {
+                        await res.status(400).json(getResponseObject("Please Send Valid Receipent Address !!", true, {}));
+                        return;
+                    }
+                    switch (transactionData.currencyName) {
+                        case "ETHER": {
+                            if (transactionData.amount < 0.02) {
+                                await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 0.02 ETHER !!", true, {}));
+                                return;
+                            }
+                            const { sendMoney } = require("../models/users.model");
+                            const result1 = await sendMoney(req.data._id, transactionData);
+                            await res.json(result1);
+                            if (!result1.error) {
+                                const { sendMoneyOnBlockChain } = require("../global/functions");
+                                const transactionHash = await sendMoneyOnBlockChain(
+                                    transactionData.network,
+                                    "ether",
+                                    process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                    transactionData.receipentAddress,
+                                    transactionData.amount,
+                                    process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                );
+                                console.log(transactionHash);
+                            }
+                            break;
+                        }
+                        case "USDT": {
+                            if (transactionData.amount < 5) {
+                                await res.status(400).json(getResponseObject("Please Send Amount Greater Than Or Equual 5 USDT !!", true, {}));
+                                return;
+                            }
+                            const { sendMoney } = require("../models/users.model");
+                            const result1 = await sendMoney(req.data._id, transactionData);
+                            await res.json(result1);
+                            if (!result1.error) {
+                                const { sendMoneyOnBlockChain } = require("../global/functions");
+                                const transactionHash = await sendMoneyOnBlockChain(
+                                    transactionData.network,
+                                    "usdt",
+                                    process.env.BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                    transactionData.receipentAddress,
+                                    transactionData.amount,
+                                    process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_ETHEREUM,
+                                );
+                                console.log(transactionHash);
+                            }
+                            break;
+                        }
+                        default: {
+                            await res.status(400).json(getResponseObject(`Please Send Valid Currency Name For ${transactionData.network} Network !!`, true, {}));
+                            return;
+                        }
+                    }
+                    break;
+                }
+                default: {
+                    await res.status(400).json(getResponseObject("Please Send Valid Network Name !!", true, {}));
+                    return;
+                }
             }
         }
     }
