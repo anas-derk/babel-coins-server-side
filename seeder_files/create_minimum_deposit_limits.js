@@ -5,22 +5,22 @@ const mongoose = require("mongoose");
 // Create Minimum Deposit Limits Schema
 
 const minimumDepositLimitsShema = mongoose.Schema({
-    depositType: {
+    debositCurrencyType: {
         type: String,
-        // required: true,
+        required: true,
     },
     network: String,
     currencyName: {
         type: String,
-        // required: true,
+        required: true,
     },
     symbol: {
         type: String,
-        // required: true,
+        required: true,
     },
     amount: {
         type: Number,
-        // required: true,
+        required: true,
     },
 });
 
