@@ -296,7 +296,6 @@ async function postSendMoney(req, res) {
                             return;
                         }
                     }
-                    break;
                 }
                 case "ETHEREUM": {
                     const web3 = require("web3");
