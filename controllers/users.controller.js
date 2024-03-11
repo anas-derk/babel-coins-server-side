@@ -223,7 +223,6 @@ async function postSendMoney(req, res) {
                                         transactionData.amount,
                                         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
                                     );
-                                    console.log(transactionResult);
                                     const { createNewTransfer } = require("../models/transfers.model");
                                     const result1 = await createNewTransfer({
                                         transferType: "external",
@@ -271,7 +270,6 @@ async function postSendMoney(req, res) {
                                         transactionData.amount,
                                         process.env.PRIVATE_KEY_FOR_BABEL_CENTRAL_WALLET_ON_TRON,
                                     );
-                                    console.log(transactionResult);
                                     const { createNewTransfer } = require("../models/transfers.model");
                                     const result1 = await createNewTransfer({
                                         transferType: "external",
