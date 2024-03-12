@@ -407,6 +407,7 @@ async function deposit(userId, network, currency, currencyIndex, newAmount, newT
                             return result;
                         }
                         case "USDT": {
+                            const { getMinimumDebositLimitsByCurrencyName } = require("../models/minimum_deposit_limits.model");
                             const minimum_deposit_limits = await getMinimumDebositLimitsByCurrencyName(currency);
                             if (newAmount < minimum_deposit_limits.data[0].amount) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
                             else user.balances[currencyIndex].validDepositeBalance += newAmount;
