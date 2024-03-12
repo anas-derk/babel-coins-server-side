@@ -252,10 +252,6 @@ const transferLimitsModel = mongoose.model("transfer_limits", transferLimitsShem
 // Create Debosits Schema
 
 const depositsShema = mongoose.Schema({
-    debositType: {
-        type: String,
-        required: true,
-    },
     depositCurrencyType: {
         type: String,
         required: true,
