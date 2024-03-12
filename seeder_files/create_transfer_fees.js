@@ -83,7 +83,7 @@ const transfer_fees_list = [
         network: "TRON",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 0,
     },
     {
         transferType: "external",
@@ -91,7 +91,7 @@ const transfer_fees_list = [
         network: "TRON",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 4,
     },
     {
         transferType: "internal",
@@ -115,7 +115,7 @@ const transfer_fees_list = [
         network: "ETHEREUM",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 0,
     },
     {
         transferType: "external",
@@ -123,7 +123,7 @@ const transfer_fees_list = [
         network: "ETHEREUM",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 4,
     },
     {
         transferType: "internal",
@@ -147,7 +147,7 @@ const transfer_fees_list = [
         network: "POLYGON",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 0,
     },
     {
         transferType: "external",
@@ -155,7 +155,7 @@ const transfer_fees_list = [
         network: "POLYGON",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 4,
     },
     {
         transferType: "internal",
@@ -179,7 +179,7 @@ const transfer_fees_list = [
         network: "BSC",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 0,
     },
     {
         transferType: "external",
@@ -187,7 +187,7 @@ const transfer_fees_list = [
         network: "BSC",
         currencyName: "USDT",
         symbol: "USDT",
-        fee: 10,
+        fee: 4,
     },
 ];
 
