@@ -379,7 +379,9 @@ async function deposit(userId, network, currency, currencyIndex, newAmount, newT
                 case "TRON": {
                     switch(currency) {
                         case "TRX": {
-                            if (newAmount < 10) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
+                            const { getMinimumDebositLimitsByCurrencyName } = require("../models/minimum_deposit_limits.model");
+                            const minimum_deposit_limits = await getMinimumDebositLimitsByCurrencyName(currency);
+                            if (newAmount < minimum_deposit_limits.data[0].amount) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
                             else user.balances[currencyIndex].validDepositeBalance += newAmount;
                             await userModel.updateOne({ _id: userId }, {
                                 balances: user.balances,
@@ -405,7 +407,8 @@ async function deposit(userId, network, currency, currencyIndex, newAmount, newT
                             return result;
                         }
                         case "USDT": {
-                            if (newAmount < 10) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
+                            const minimum_deposit_limits = await getMinimumDebositLimitsByCurrencyName(currency);
+                            if (newAmount < minimum_deposit_limits.data[0].amount) user.balances[currencyIndex].invalidDepositeBalance += newAmount;
                             else user.balances[currencyIndex].validDepositeBalance += newAmount;
                             await userModel.updateOne({ _id: userId }, {
                                 balances: user.balances,
